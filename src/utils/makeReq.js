@@ -2,8 +2,8 @@ import { LOCALSTORAGE_TOKEN_KEY } from 'src/Contexts/AuthContext';
 import { toast } from 'react-toastify';
 
 // * Development URLs
-const API_BASE_URL = `http://localhost:5001/api`;
-const API_BASE_ORIGIN = `http://localhost:5001`;
+const API_BASE_URL = `http://localhost:7001/api`;
+const API_BASE_ORIGIN = `http://localhost:7001`;
 
 const handleCatch = (err) => {
   // console.log('**********');
@@ -37,15 +37,17 @@ const makeReq = (
   if (body) {
     config.body = JSON.stringify(body);
   }
-  return fetch(`${API_BASE_URL}${endpoint}`, config).then(async (res) => {
-    const data = await res.json();
-    // console.log(`data`, data);
-    if (res.ok) {
-      return data;
-    } else {
-      return Promise.reject(data);
+  return fetch(`${API_BASE_URL}${endpoint}`, config).then(
+    async (res) => {
+      const data = await res.json();
+      // console.log(`data`, data);
+      if (res.ok) {
+        return data;
+      } else {
+        return Promise.reject(data);
+      }
     }
-  });
+  );
 };
 
 export { API_BASE_URL, makeReq, handleCatch, API_BASE_ORIGIN };

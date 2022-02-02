@@ -47,8 +47,6 @@ export default function LoginForm() {
         const res = await axios.post(`${API_BASE_URL}/auth/login`, {
           ...values,
         });
-        if (res.data.user.role !== 'admin')
-          return toast.error('Invalid Credentials');
         console.log(`RES LOGIN : \n`, res);
         toast.success('Login Successfull!');
         signInUser(res.data.token, res.data.user);
@@ -59,8 +57,14 @@ export default function LoginForm() {
     },
   });
 
-  const { errors, touched, values, isSubmitting, handleSubmit, getFieldProps } =
-    formik;
+  const {
+    errors,
+    touched,
+    values,
+    isSubmitting,
+    handleSubmit,
+    getFieldProps,
+  } = formik;
 
   const handleShowPassword = () => {
     setShowPassword((show) => !show);
@@ -90,7 +94,9 @@ export default function LoginForm() {
               endAdornment: (
                 <InputAdornment position='end'>
                   <IconButton onClick={handleShowPassword} edge='end'>
-                    <Icon icon={showPassword ? eyeFill : eyeOffFill} />
+                    <Icon
+                      icon={showPassword ? eyeFill : eyeOffFill}
+                    />
                   </IconButton>
                 </InputAdornment>
               ),

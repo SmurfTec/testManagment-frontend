@@ -16,8 +16,6 @@ import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './Contexts/AuthContext';
 import { AssetsProvider } from './Contexts/AssetsContext';
-import { GamesProvider } from './Contexts/GamesContext';
-import { DevRequestsProvider } from './Contexts/DevRequestsContext';
 import { UsersProvider } from './Contexts/UsersContext';
 
 // * -------------------------------
@@ -38,15 +36,11 @@ ReactDOM.render(
         pauseOnHover
       />
       <AuthProvider>
-        <AssetsProvider>
-          <GamesProvider>
-            <DevRequestsProvider>
-              <UsersProvider>
-                <App />
-              </UsersProvider>
-            </DevRequestsProvider>
-          </GamesProvider>
-        </AssetsProvider>
+        {/* <AssetsProvider> */}
+        {/* <UsersProvider> */}
+        <App />
+        {/* </UsersProvider> */}
+        {/* </AssetsProvider> */}
       </AuthProvider>
     </BrowserRouter>
   </HelmetProvider>,

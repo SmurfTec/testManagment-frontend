@@ -64,7 +64,8 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -115,7 +116,9 @@ export default function Assets() {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - ASSETLIST.length) : 0;
+    page > 0
+      ? Math.max(0, (1 + page) * rowsPerPage - ASSETLIST.length)
+      : 0;
 
   const filteredGames = applySortFilter(
     ASSETLIST,
@@ -161,11 +164,15 @@ export default function Assets() {
                 />
                 <TableBody>
                   {filteredGames
-                    .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                    .slice(
+                      page * rowsPerPage,
+                      page * rowsPerPage + rowsPerPage
+                    )
                     .map((row) => {
                       const { id, user, name, images, price } = row;
 
-                      const isItemSelected = selected.indexOf(name) !== -1;
+                      const isItemSelected =
+                        selected.indexOf(name) !== -1;
 
                       return (
                         <TableRow
@@ -175,13 +182,20 @@ export default function Assets() {
                           role='checkbox'
                           selected={isItemSelected}
                           aria-checked={isItemSelected}
-                          sx={{ cursor: 'pointer', textDecoration: 'none' }}
+                          sx={{
+                            cursor: 'pointer',
+                            textDecoration: 'none',
+                          }}
                           onClick={() =>
                             navigate(`/dashboard/assets/${row.id}`)
                           }
                         >
                           <TableCell />
-                          <TableCell component='th' scope='row' padding='none'>
+                          <TableCell
+                            component='th'
+                            scope='row'
+                            padding='none'
+                          >
                             <Stack
                               direction='row'
                               alignItems='center'
@@ -193,7 +207,9 @@ export default function Assets() {
                               </Typography>
                             </Stack>
                           </TableCell>
-                          <TableCell align='left'>{user.name}</TableCell>
+                          <TableCell align='left'>
+                            {user.name}
+                          </TableCell>
                           <TableCell align='left'>{price}</TableCell>
                         </TableRow>
                       );
@@ -207,7 +223,11 @@ export default function Assets() {
                 {isGameNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
