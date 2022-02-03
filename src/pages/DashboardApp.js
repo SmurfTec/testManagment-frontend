@@ -1,6 +1,7 @@
 // material
 import { Box, Grid, Container, Typography } from '@mui/material';
 // components
+import { useContext, useEffect, useState } from 'react';
 import Page from '../components/Page';
 import {
   AppTasks,
@@ -15,15 +16,37 @@ import {
   AppTrafficBySite,
   AppCurrentSubject,
   AppConversionRates,
+  ProjectStats,
+  CurrentProjects,
   AppCard,
 } from '../components/_dashboard/app';
-import SportsEsportsIcon from '@mui/icons-material/SportsEsports';
-import PeopleIcon from '@mui/icons-material/People';
-import TextSnippetIcon from '@mui/icons-material/TextSnippet';
-import WebAssetIcon from '@mui/icons-material/WebAsset';
+
+import PersonIcon from '@mui/icons-material/Person';
+import FactCheckIcon from '@mui/icons-material/FactCheck';
+import FilePresentIcon from '@mui/icons-material/FilePresent';
+
 // ----------------------------------------------------------------------
+import { UsersContext } from 'src/Contexts/UsersContext';
+import { ProjectsContext } from 'src/Contexts/ProjectsContext';
 
 export default function DashboardApp() {
+  const { users, loading } = useContext(UsersContext);
+  const { projects, loading: projectsLoading } =
+    useContext(ProjectsContext);
+
+  const [testers, setTesters] = useState([]);
+  const [qaManagers, setQaManagers] = useState([]);
+
+  useEffect(() => {
+    if (!users) return;
+    setTesters(users.filter((user) => user.role === 'tester'));
+  }, [users]);
+
+  useEffect(() => {
+    if (!users) return;
+    setQaManagers(users.filter((user) => user.role === 'qaManager'));
+  }, [users]);
+
   return (
     <Page title=' Admin Dashboard'>
       <Container maxWidth='xl'>
@@ -34,44 +57,44 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             {/* <AppWeeklySales /> */}
             <AppCard
-              title='Games'
+              title='QaManagers'
               color='primary'
-              TOTAL={50}
-              Icon={SportsEsportsIcon}
+              TOTAL={qaManagers.length}
+              Icon={PersonIcon}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
-              title='Assets'
+              title='Testers'
               color='info'
-              TOTAL={30}
-              Icon={WebAssetIcon}
+              TOTAL={testers.length}
+              Icon={PersonIcon}
             />
           </Grid>
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
-              title='Users'
+              title='Projects'
               color='warning'
-              TOTAL={80}
-              Icon={PeopleIcon}
+              TOTAL={projects.length}
+              Icon={FilePresentIcon}
             />
           </Grid>
 
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
-              title='Development Requests'
+              title='Test Cases'
               TOTAL={110}
-              Icon={TextSnippetIcon}
+              Icon={FactCheckIcon}
               color='error'
             />
           </Grid>
-          {/* <Grid item xs={12} md={6} lg={8}>
-            <AppWebsiteVisits />
+          <Grid item xs={12} md={6} lg={8}>
+            <ProjectStats />
           </Grid>
           <Grid item xs={12} md={6} lg={4}>
-            <AppCurrentVisits />
+            <CurrentProjects />
           </Grid>
-          <Grid item xs={12} md={6} lg={8}>
+          {/* <Grid item xs={12} md={6} lg={8}>
             <AppConversionRates />
           </Grid>
           <Grid item xs={12} md={6} lg={4}>

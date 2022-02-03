@@ -1,9 +1,17 @@
+import React, { useContext } from 'react';
 import PropTypes from 'prop-types';
 import { useEffect } from 'react';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
 // material
 import { styled } from '@mui/material/styles';
-import { Box, Link, Drawer, Typography, Avatar, Stack } from '@mui/material';
+import {
+  Box,
+  Link,
+  Drawer,
+  Typography,
+  Avatar,
+  Stack,
+} from '@mui/material';
 // components
 import Logo from '../../components/Logo';
 import Scrollbar from '../../components/Scrollbar';
@@ -14,6 +22,7 @@ import sidebarConfig from './SidebarConfig';
 import account from '../../_mocks_/account';
 
 // ----------------------------------------------------------------------
+import { AuthContext } from '../../Contexts/AuthContext';
 
 const DRAWER_WIDTH = 280;
 
@@ -39,7 +48,12 @@ DashboardSidebar.propTypes = {
   onCloseSidebar: PropTypes.func,
 };
 
-export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
+export default function DashboardSidebar({
+  isOpenSidebar,
+  onCloseSidebar,
+}) {
+  const { user } = useContext(AuthContext);
+
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -69,12 +83,16 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           alignItems: 'center',
         }}
       >
-        <Box component={RouterLink} to='/' sx={{ display: 'inline-flex' }}>
+        <Box
+          component={RouterLink}
+          to='/'
+          sx={{ display: 'inline-flex' }}
+        >
           <Logo />
           {/* <Typography variant='h5'></Typography> */}
         </Box>
         <Typography variant='h5' sx={{ color: 'text.primary' }}>
-          Devapplover Admin
+          Tester-app
         </Typography>
       </Box>
 
@@ -83,11 +101,17 @@ export default function DashboardSidebar({ isOpenSidebar, onCloseSidebar }) {
           <AccountStyle>
             <Avatar src={account.photoURL} alt='photoURL' />
             <Box sx={{ ml: 2 }}>
-              <Typography variant='subtitle2' sx={{ color: 'text.primary' }}>
-                {account.displayName}
+              <Typography
+                variant='subtitle2'
+                sx={{ color: 'text.primary' }}
+              >
+                {user.name}
               </Typography>
-              <Typography variant='body2' sx={{ color: 'text.secondary' }}>
-                {account.role}
+              <Typography
+                variant='body2'
+                sx={{ color: 'text.secondary' }}
+              >
+                {user.role}
               </Typography>
             </Box>
           </AccountStyle>

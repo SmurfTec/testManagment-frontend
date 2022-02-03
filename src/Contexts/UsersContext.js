@@ -8,6 +8,9 @@ export const UsersContext = React.createContext();
 export const UsersProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
   const { user } = useContext(AuthContext);
+
+  console.log('USER', user);
+
   const [
     users,
     setUsers,
@@ -21,6 +24,8 @@ export const UsersProvider = ({ children }) => {
   const fetchUsers = async () => {
     try {
       const resData = await makeReq(`/users`);
+      console.log('USERS', resData);
+
       setUsers(resData.users);
     } catch (err) {
       handleCatch(err);
@@ -41,7 +46,11 @@ export const UsersProvider = ({ children }) => {
   // * CRUD Operations
   const createUser = async (state, callback) => {
     try {
-      const resData = await makeReq(`/users`, { body: state }, 'POST');
+      const resData = await makeReq(
+        `/users`,
+        { body: state },
+        'POST'
+      );
       toast.success('User Created Successfully!');
       pushUser(resData.user);
       callback?.();
@@ -52,7 +61,11 @@ export const UsersProvider = ({ children }) => {
 
   const editUser = async (id, state, callback) => {
     try {
-      const resData = await makeReq(`/users/${id}`, { body: state }, 'PATCH');
+      const resData = await makeReq(
+        `/users/${id}`,
+        { body: state },
+        'PATCH'
+      );
       toast.success('User Updated Successfully!');
       updateUser(id, resData.user);
       callback?.();

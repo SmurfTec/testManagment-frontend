@@ -19,7 +19,7 @@ const Loader = ({ noTitle }) => {
       >
         {!noTitle && (
           <Typography variant='h4' color='primary'>
-            Devapplover Admin
+            Tester-App
           </Typography>
         )}
       </Box>

@@ -1,5 +1,5 @@
 import { filter } from 'lodash';
-import { useContext, useState } from 'react';
+import { useContext, useState, useEffect } from 'react';
 import faker from 'faker';
 
 // material
@@ -36,7 +36,7 @@ import v4 from 'uuid/dist/v4';
 const TABLE_HEAD = [
   { _id: 'name', label: 'Name', alignRight: false },
   { _id: 'email', label: 'Email', alignRight: false },
-  { _id: 'about', label: 'About', alignRight: false },
+  { _id: 'createdAt', label: 'createdAt', alignRight: false },
   { _id: '' },
 ];
 
@@ -68,7 +68,8 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -76,12 +77,23 @@ function applySortFilter(array, comparator, query) {
 
 export default function User() {
   const [page, setPage] = useState(0);
+  //*
   const { users, loading } = useContext(UsersContext);
+
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [qaManagers, setQaManagers] = useState([]);
+
+  console.log('USERS', users);
+
+  useEffect(() => {
+    if (!users) return;
+    setQaManagers(users.filter((user) => user.role === 'qaManager'));
+  }, [users]);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -91,7 +103,7 @@ export default function User() {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelecteds = users?.map((n) => n.name);
+      const newSelecteds = qaManagers?.map((n) => n.name);
       setSelected(newSelecteds);
       return;
     }
@@ -130,10 +142,15 @@ export default function User() {
   };
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - (users?.length || 0)) : 0;
+    page > 0
+      ? Math.max(
+          0,
+          (1 + page) * rowsPerPage - (qaManagers?.length || 0)
+        )
+      : 0;
 
   const filteredUsers = applySortFilter(
-    users,
+    qaManagers,
     getComparator(order, orderBy),
     filterName
   );
@@ -141,7 +158,7 @@ export default function User() {
   const isUserNotFound = filteredUsers.length === 0;
 
   return (
-    <Page title='Dashboard | User '>
+    <Page title='Dashboard | QaManagers '>
       <Container>
         <Stack
           direction='row'
@@ -150,7 +167,7 @@ export default function User() {
           mb={5}
         >
           <Typography variant='h4' gutterBottom>
-            User
+            QaManagers
           </Typography>
         </Stack>
 
@@ -169,7 +186,7 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={users?.length || 0}
+                  rowCount={qaManagers?.length || 0}
                   numSelected={selected.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -186,7 +203,10 @@ export default function User() {
                               key={v4()}
                               tabIndex={-1}
                               role='checkbox'
-                              sx={{ cursor: 'pointer', textDecoration: 'none' }}
+                              sx={{
+                                cursor: 'pointer',
+                                textDecoration: 'none',
+                              }}
                             >
                               {Array(9)
                                 .fill()
@@ -204,8 +224,9 @@ export default function User() {
                           page * rowsPerPage + rowsPerPage
                         )
                         .map((row) => {
-                          const { id, name, about, email } = row;
-                          const isItemSelected = selected.indexOf(name) !== -1;
+                          const { id, name, createdAt, email } = row;
+                          const isItemSelected =
+                            selected.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -227,20 +248,23 @@ export default function User() {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Avatar
-                                    alt={name}
-                                    src={faker.internet.avatar}
-                                  />
-                                  <Typography variant='subtitle2' noWrap>
+                                  <Typography
+                                    variant='subtitle2'
+                                    noWrap
+                                  >
                                     {name}
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align='left'>{email}</TableCell>
-                              <TableCell align='left'>{about}</TableCell>
+                              <TableCell align='left'>
+                                {email}
+                              </TableCell>
+                              <TableCell align='left'>
+                                {new Date(createdAt).toDateString()}
+                              </TableCell>
 
                               <TableCell align='right'>
-                                {/* <UserMoreMenu /> */}
+                                <UserMoreMenu />
                               </TableCell>
                             </TableRow>
                           );
@@ -254,7 +278,11 @@ export default function User() {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
@@ -267,7 +295,7 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component='div'
-            count={users?.length || 0}
+            count={qaManagers?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}

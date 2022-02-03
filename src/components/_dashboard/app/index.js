@@ -1,13 +1,15 @@
 export { default as AppBugReports } from './AppBugReports';
 export { default as AppConversionRates } from './AppConversionRates';
 export { default as AppCurrentSubject } from './AppCurrentSubject';
-export { default as AppCurrentVisits } from './AppCurrentVisits';
+export { default as AppCurrentVisits } from './CurrentProjects';
 export { default as AppItemOrders } from './AppItemOrders';
 export { default as AppNewsUpdate } from './AppNewsUpdate';
 export { default as AppNewUsers } from './AppNewUsers';
 export { default as AppOrderTimeline } from './AppOrderTimeline';
 export { default as AppTasks } from './AppTasks';
 export { default as AppTrafficBySite } from './AppTrafficBySite';
-export { default as AppWebsiteVisits } from './AppWebsiteVisits';
+export { default as AppWebsiteVisits } from './ProjectStats';
 export { default as AppWeeklySales } from './AppWeeklySales';
+export { default as ProjectStats } from './ProjectStats';
+export { default as CurrentProjects } from './CurrentProjects';
 export { default as AppCard } from './AppCard';

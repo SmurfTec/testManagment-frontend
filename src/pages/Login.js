@@ -5,6 +5,8 @@ import {
   Container,
   Typography,
 } from '@mui/material';
+import { styled } from '@mui/material/styles';
+
 // layouts
 import AuthLayout from '../layouts/AuthLayout';
 // components

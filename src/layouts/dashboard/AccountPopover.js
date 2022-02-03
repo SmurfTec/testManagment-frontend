@@ -1,3 +1,4 @@
+import React, { useContext } from 'react';
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import homeFill from '@iconify/icons-eva/home-fill';
@@ -19,6 +20,7 @@ import {
 import MenuPopover from '../../components/MenuPopover';
 //
 import account from '../../_mocks_/account';
+import { AuthContext } from '../../Contexts/AuthContext';
 
 // ----------------------------------------------------------------------
 
@@ -28,11 +30,11 @@ const MENU_OPTIONS = [
     icon: homeFill,
     linkTo: '/',
   },
-  {
-    label: 'Profile',
-    icon: personFill,
-    linkTo: '/profile',
-  },
+  // {
+  //   label: 'Profile',
+  //   icon: personFill,
+  //   linkTo: '/profile',
+  // },
 ];
 
 // ----------------------------------------------------------------------
@@ -40,6 +42,7 @@ const MENU_OPTIONS = [
 export default function AccountPopover() {
   const anchorRef = useRef(null);
   const [open, setOpen] = useState(false);
+  const { user } = useContext(AuthContext);
 
   const handleOpen = () => {
     setOpen(true);
@@ -65,7 +68,8 @@ export default function AccountPopover() {
               height: '100%',
               borderRadius: '50%',
               position: 'absolute',
-              bgcolor: (theme) => alpha(theme.palette.grey[900], 0.72),
+              bgcolor: (theme) =>
+                alpha(theme.palette.grey[900], 0.72),
             },
           }),
         }}
@@ -81,10 +85,14 @@ export default function AccountPopover() {
       >
         <Box sx={{ my: 1.5, px: 2.5 }}>
           <Typography variant='subtitle1' noWrap>
-            {account.displayName}
+            {user.name}
           </Typography>
-          <Typography variant='body2' sx={{ color: 'text.secondary' }} noWrap>
-            {account.email}
+          <Typography
+            variant='body2'
+            sx={{ color: 'text.secondary' }}
+            noWrap
+          >
+            {user.email}
           </Typography>
         </Box>
 
@@ -112,11 +120,11 @@ export default function AccountPopover() {
           </MenuItem>
         ))}
 
-        <Box sx={{ p: 2, pt: 1.5 }}>
+        {/* <Box sx={{ p: 2, pt: 1.5 }}>
           <Button fullWidth color='inherit' variant='outlined'>
             Logout
           </Button>
-        </Box>
+        </Box> */}
       </MenuPopover>
     </>
   );

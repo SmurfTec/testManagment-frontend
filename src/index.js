@@ -15,7 +15,7 @@ import App from './App';
 import * as serviceWorker from './serviceWorker';
 import reportWebVitals from './reportWebVitals';
 import { AuthProvider } from './Contexts/AuthContext';
-import { AssetsProvider } from './Contexts/AssetsContext';
+import { ProjectsProvider } from './Contexts/ProjectsContext';
 import { UsersProvider } from './Contexts/UsersContext';
 
 // * -------------------------------
@@ -36,11 +36,11 @@ ReactDOM.render(
         pauseOnHover
       />
       <AuthProvider>
-        {/* <AssetsProvider> */}
-        {/* <UsersProvider> */}
-        <App />
-        {/* </UsersProvider> */}
-        {/* </AssetsProvider> */}
+        <ProjectsProvider>
+          <UsersProvider>
+            <App />
+          </UsersProvider>
+        </ProjectsProvider>
       </AuthProvider>
     </BrowserRouter>
   </HelmetProvider>,
