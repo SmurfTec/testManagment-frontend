@@ -1,6 +1,7 @@
 import { filter } from 'lodash';
 import { useContext, useState } from 'react';
 import faker from 'faker';
+import { Icon } from '@iconify/react';
 
 // material
 import {
@@ -16,6 +17,7 @@ import {
   Typography,
   TableContainer,
   TablePagination,
+  Button,
   Skeleton,
 } from '@mui/material';
 // components
@@ -29,7 +31,11 @@ import {
 } from '../../components/_dashboard/user';
 //
 import { ProjectsContext } from 'src/Contexts/ProjectsContext';
+import { AuthContext } from 'src/Contexts/AuthContext';
 import v4 from 'uuid/dist/v4';
+import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
+import plusFill from '@iconify/icons-eva/plus-fill';
+import AddorEditModal from 'src/dialogs/AddorEditModal';
 
 // ----------------------------------------------------------------------
 
@@ -77,7 +83,10 @@ function applySortFilter(array, comparator, query) {
 
 export default function User() {
   const [page, setPage] = useState(0);
-  const { projects, loading } = useContext(ProjectsContext);
+
+  const { user, loading } = useContext(AuthContext);
+  const { projects, loading: projectLoading } =
+    useContext(ProjectsContext);
 
   console.log('PROJECTS', projects);
 
@@ -86,6 +95,14 @@ export default function User() {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+
+  const [isDelOpen, setIsDelOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+
+  const toggleDelOpen = () => setIsDelOpen((st) => !st);
+  const toggleEditOpen = () => setIsEditOpen((st) => !st);
+  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -149,6 +166,12 @@ export default function User() {
 
   const isUserNotFound = filteredData.length === 0;
 
+  const handleDelete = () => {
+    // toggleDelOpen();
+    console.log(`selected`, selected);
+    // deleteManager(selected, toggleDelOpen);
+  };
+
   return (
     <Page title='Dashboard | Projects '>
       <Container>
@@ -161,11 +184,20 @@ export default function User() {
           <Typography variant='h4' gutterBottom>
             Projects
           </Typography>
+          {user && user.role === 'admin' && (
+            <Button
+              variant='contained'
+              onClick={toggleCreateOpen}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              New Project
+            </Button>
+          )}
         </Stack>
 
         <Card>
           <UserListToolbar
-            numSelected={selected.length}
+            numSelected={selected?.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             slug='Users'
@@ -179,7 +211,7 @@ export default function User() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={projects?.length || 0}
-                  numSelected={selected.length}
+                  numSelected={selected?.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                   noCheckBox
@@ -216,14 +248,14 @@ export default function User() {
                           page * rowsPerPage + rowsPerPage
                         )
                         .map((row) => {
-                          const { id, name, createdAt } = row;
+                          const { _id, name, createdAt } = row;
                           const isItemSelected =
-                            selected.indexOf(name) !== -1;
+                            selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
                               hover
-                              key={id}
+                              key={_id}
                               tabIndex={-1}
                               role='checkbox'
                               selected={isItemSelected}
@@ -254,10 +286,38 @@ export default function User() {
                               <TableCell align='left'>
                                 {row?.tests?.length}
                               </TableCell>
-
-                              <TableCell align='right'>
-                                <UserMoreMenu />
-                              </TableCell>
+                              {user && user.role === 'admin' && (
+                                <TableCell align='right'>
+                                  <UserMoreMenu
+                                    currentProject={row}
+                                    viewTask
+                                    // viewLink={`/dashboard/projects/${_id}`}
+                                    toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
+                                    setSelected={setSelected}
+                                    // addToTable={!manager}
+                                    // toggleAddToOpen={() => {
+                                    //   setSelectedTask(_id);
+                                    //   toggleAddToOpen();
+                                    // }}
+                                    // handleRemoveFrom={() => {
+                                    //   console.clear();
+                                    //   console.log(`row`, row);
+                                    //   console.log(`_id`, _id);
+                                    //   console.log(
+                                    //     `manager._id`,
+                                    //     manager._id
+                                    //   );
+                                    //   const managerId =
+                                    //     manager._id || manager;
+                                    //   unAssignTaskFromManger(
+                                    //     _id,
+                                    //     managerId
+                                    //   );
+                                    // }}
+                                  />
+                                </TableCell>
+                              )}
                             </TableRow>
                           );
                         })}
@@ -295,6 +355,30 @@ export default function User() {
           />
         </Card>
       </Container>
+
+      <ConfirmDeleteModal
+        open={isDelOpen}
+        toggleDialog={toggleDelOpen}
+        dialogTitle='Delete This Manager ?'
+        success={handleDelete}
+      />
+      <AddorEditModal
+        isOpen={isCreateOpen}
+        // createNew={(...props) => {
+        //   addNewManager(...props, toggleCreateOpen);
+        // }}
+        closeDialog={toggleCreateOpen}
+      />
+      {/* <AddorEditModal
+        isOpen={isEditOpen}
+        closeDialog={toggleEditOpen}
+        // updateUser={(...props) => {
+        //   editManager(...props, toggleEditOpen);
+        // }}
+        editUser={selected}
+        isEdit
+        role='Manager'
+      /> */}
     </Page>
   );
 }

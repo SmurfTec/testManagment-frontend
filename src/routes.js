@@ -11,6 +11,9 @@ import DashboardApp from './pages/DashboardApp';
 import QaManagers from './pages/QaManagers';
 import Testers from './pages/Testers';
 import Projects from './pages/Projects';
+
+import projectDetails from './pages/Projects/projectDetails';
+
 // import Game from './pages/Game';
 // import NewAssets from './pages/Assets/NewAssets';
 // import DevelopmentRequests from './pages/DevRequests';
@@ -38,6 +41,7 @@ export default function Router() {
         { path: 'qaManagers', element: <QaManagers /> },
         { path: 'testers', element: <Testers /> },
         { path: 'projects', element: <Projects /> },
+        { path: 'projects/:id', element: <projectDetails /> },
         // { path: 'games/:id', element: <GameDetails /> },
         // { path: 'assets/:id', element: <AssetDetails /> },
         // { path: 'assets', element: <Assets /> },

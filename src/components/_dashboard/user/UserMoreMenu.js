@@ -1,9 +1,9 @@
 import { Icon } from '@iconify/react';
 import { useRef, useState } from 'react';
 import editFill from '@iconify/icons-eva/edit-fill';
-import { Link as RouterLink } from 'react-router-dom';
 import trash2Outline from '@iconify/icons-eva/trash-2-outline';
 import moreVerticalFill from '@iconify/icons-eva/more-vertical-fill';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 
 // material
 import {
@@ -16,9 +16,34 @@ import {
 
 // ----------------------------------------------------------------------
 
-export default function UserMoreMenu() {
+export default function UserMoreMenu({
+  currentProject,
+  toggleDelOpen,
+  toggleEditOpen,
+  setSelected,
+  viewTask,
+  viewLink,
+}) {
+  const navigate = useNavigate();
   const ref = useRef(null);
   const [isOpen, setIsOpen] = useState(false);
+
+  const handleDelete = () => {
+    setSelected(currentProject._id);
+    setIsOpen(false);
+    toggleDelOpen();
+  };
+
+  const handleEdit = () => {
+    setSelected(currentProject);
+    setIsOpen(false);
+    toggleEditOpen();
+  };
+
+  const handleAddTo = () => {
+    setIsOpen(false);
+    // toggleAddToOpen();
+  };
 
   return (
     <>
@@ -36,7 +61,10 @@ export default function UserMoreMenu() {
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          sx={{ color: 'text.secondary' }}
+          onClick={handleEdit}
+        >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
@@ -45,7 +73,10 @@ export default function UserMoreMenu() {
             primaryTypographyProps={{ variant: 'body2' }}
           />
         </MenuItem>
-        <MenuItem sx={{ color: 'text.secondary' }}>
+        <MenuItem
+          sx={{ color: 'text.secondary' }}
+          onClick={handleDelete}
+        >
           <ListItemIcon>
             <Icon icon={trash2Outline} width={24} height={24} />
           </ListItemIcon>
@@ -54,11 +85,9 @@ export default function UserMoreMenu() {
             primaryTypographyProps={{ variant: 'body2' }}
           />
         </MenuItem>
-
         <MenuItem
-          component={RouterLink}
-          to='#'
           sx={{ color: 'text.secondary' }}
+          onClick={() => navigate(viewLink, { replace: true })}
         >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
