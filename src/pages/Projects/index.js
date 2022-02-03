@@ -291,7 +291,7 @@ export default function User() {
                                   <UserMoreMenu
                                     currentProject={row}
                                     viewTask
-                                    // viewLink={`/dashboard/projects/${_id}`}
+                                    viewLink={`/dashboard/projects/${_id}`}
                                     toggleDelOpen={toggleDelOpen}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
