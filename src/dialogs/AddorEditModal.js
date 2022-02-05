@@ -2,6 +2,7 @@ import React, { useState, useEffect, useContext } from 'react';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
 import Dialog from '@material-ui/core/Dialog';
+
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
@@ -13,11 +14,11 @@ import { toast } from 'react-toastify';
 // import { AuthContext } from 'src/contexts/AuthContext';
 
 const useStyles = makeStyles((props) => ({
-  // Dialog: {
-  //   '& .MuiDialog-paper': {
-  //     minHeight: props.role === 'Task' && 450,
-  //   },
-  // },
+  Dialog: {
+    '& .MuiDialog-paper': {
+      minHeight: 250,
+    },
+  },
   addBtn: {},
   cancelBtn: {},
 }));
@@ -43,7 +44,8 @@ const AddorEditModal = (props) => {
     updateUser,
     viewOnly,
   } = props;
-  const classes = useStyles(props);
+
+  const classes = useStyles();
 
   const initialState = {
     name: '',

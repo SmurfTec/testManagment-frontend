@@ -356,12 +356,13 @@ export default function User() {
         </Card>
       </Container>
 
-      <ConfirmDeleteModal
+      {/* <ConfirmDeleteModal
         open={isDelOpen}
         toggleDialog={toggleDelOpen}
         dialogTitle='Delete This Manager ?'
         success={handleDelete}
-      />
+      /> */}
+
       <AddorEditModal
         isOpen={isCreateOpen}
         // createNew={(...props) => {
