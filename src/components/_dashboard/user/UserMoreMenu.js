@@ -23,6 +23,7 @@ export default function UserMoreMenu({
   setSelected,
   viewTask,
   viewLink,
+  isProject = false,
 }) {
   const navigate = useNavigate();
   const ref = useRef(null);
@@ -61,10 +62,7 @@ export default function UserMoreMenu({
         anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
         transformOrigin={{ vertical: 'top', horizontal: 'right' }}
       >
-        <MenuItem
-          sx={{ color: 'text.secondary' }}
-          onClick={handleEdit}
-        >
+        {/* <MenuItem sx={{ color: 'text.secondary' }} onClick={handleEdit}>
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
           </ListItemIcon>
@@ -72,22 +70,24 @@ export default function UserMoreMenu({
             primary='View'
             primaryTypographyProps={{ variant: 'body2' }}
           />
-        </MenuItem>
+        </MenuItem> */}
+        {
+          <MenuItem sx={{ color: 'text.secondary' }} onClick={handleDelete}>
+            <ListItemIcon>
+              <Icon icon={trash2Outline} width={24} height={24} />
+            </ListItemIcon>
+            <ListItemText
+              primary='Delete'
+              primaryTypographyProps={{ variant: 'body2' }}
+            />
+          </MenuItem>
+        }
         <MenuItem
           sx={{ color: 'text.secondary' }}
-          onClick={handleDelete}
-        >
-          <ListItemIcon>
-            <Icon icon={trash2Outline} width={24} height={24} />
-          </ListItemIcon>
-          <ListItemText
-            primary='Delete'
-            primaryTypographyProps={{ variant: 'body2' }}
-          />
-        </MenuItem>
-        <MenuItem
-          sx={{ color: 'text.secondary' }}
-          onClick={() => navigate(viewLink, { replace: true })}
+          onClick={(e) => {
+            e.stopPropagation();
+            navigate(viewLink, { replace: true });
+          }}
         >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />

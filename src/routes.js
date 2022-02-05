@@ -12,7 +12,7 @@ import QaManagers from './pages/QaManagers';
 import Testers from './pages/Testers';
 import Projects from './pages/Projects';
 
-import ProjectDetails from './pages/Projects/ProjectDetails';
+import ProjectDetails from './pages/Projects/projectDetails';
 
 // import Game from './pages/Game';
 // import NewAssets from './pages/Assets/NewAssets';
@@ -24,6 +24,7 @@ import { useContext, useEffect, useState } from 'react';
 import { AuthContext } from './Contexts/AuthContext';
 import Loader from './components/Loader';
 import Logout from './components/Logout';
+import TestDetails from './pages/Projects/testDetails';
 // import { ProjectStats } from './components/_dashboard/app';
 
 // ----------------------------------------------------------------------
@@ -42,6 +43,7 @@ export default function Router() {
         { path: 'testers', element: <Testers /> },
         { path: 'projects', element: <Projects /> },
         { path: 'projects/:id', element: <ProjectDetails /> },
+        { path: 'projects/:id/tests/:testId', element: <TestDetails /> },
         // { path: 'games/:id', element: <GameDetails /> },
         // { path: 'assets/:id', element: <AssetDetails /> },
         // { path: 'assets', element: <Assets /> },

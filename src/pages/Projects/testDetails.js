@@ -1,48 +1,40 @@
-import { filter } from 'lodash';
-import { useContext, useState } from 'react';
-import faker from 'faker';
-import { Icon } from '@iconify/react';
-
-// material
 import {
   Card,
-  Table,
+  Container,
+  Skeleton,
   Stack,
-  Avatar,
-  Checkbox,
-  TableRow,
+  Table,
   TableBody,
   TableCell,
-  Container,
-  Typography,
   TableContainer,
   TablePagination,
-  Button,
-  Skeleton,
+  TableRow,
+  TextField,
+  Typography,
 } from '@mui/material';
-// components
-import Page from '../../components/Page';
-import Scrollbar from '../../components/Scrollbar';
-import SearchNotFound from '../../components/SearchNotFound';
+import { Box, typography } from '@mui/system';
+import { filter } from 'lodash';
+
+import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import Page from 'src/components/Page';
+import Scrollbar from 'src/components/Scrollbar';
+import SearchNotFound from 'src/components/SearchNotFound';
 import {
   UserListHead,
   UserListToolbar,
   UserMoreMenu,
-} from '../../components/_dashboard/user';
-//
-import { ProjectsContext } from 'src/Contexts/ProjectsContext';
+} from 'src/components/_dashboard/user';
 import { AuthContext } from 'src/Contexts/AuthContext';
+import { ProjectsContext } from 'src/Contexts/ProjectsContext';
 import v4 from 'uuid/dist/v4';
-import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
-import plusFill from '@iconify/icons-eva/plus-fill';
-import AddorEditModal from 'src/dialogs/AddorEditModal';
-
-// ----------------------------------------------------------------------
 
 const TABLE_HEAD = [
   { _id: 'name', label: 'Name', alignRight: false },
-  { _id: 'createdAt', label: 'CreatedAt', alignRight: false },
-  { _id: 'tests', label: 'Tests', alignRight: false },
+  { _id: 'language', label: 'Language', alignRight: false },
+  { _id: 'preRequiste', label: 'PreRequiste', alignRight: false },
+  { _id: 'priority', label: 'Priority', alignRight: false },
+  { _id: 'difficultyLevel', label: 'Difficulty Level', alignRight: false },
   { _id: '' },
 ];
 
@@ -80,42 +72,38 @@ function applySortFilter(array, comparator, query) {
   return stabilizedThis.map((el) => el[0]);
 }
 
-export default function User() {
+const TestDetails = () => {
+  const { getProjectById, projects, loading } = useContext(ProjectsContext);
+  const { user } = useContext(AuthContext);
+  const [project, setProject] = useState();
+  const [test, setTest] = useState();
+
   const [page, setPage] = useState(0);
-
-  const { user, loading } = useContext(AuthContext);
-  const { projects, loading: projectLoading } = useContext(ProjectsContext);
-
-  console.log('PROJECTS', projects);
-
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [isDelOpen, setIsDelOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const { id, testId } = useParams();
+  const navigate = useNavigate();
 
-  const toggleDelOpen = () => setIsDelOpen((st) => !st);
-  const toggleEditOpen = () => setIsEditOpen((st) => !st);
-  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
-
-  const handleRequestSort = (event, property) => {
-    const isAsc = orderBy === property && order === 'asc';
-    setOrder(isAsc ? 'desc' : 'asc');
-    setOrderBy(property);
+  const handleTxtChange = (e) => {
+    setTest((st) => ({ ...st, [e.target.name]: e.target.value }));
   };
 
-  const handleSelectAllClick = (event) => {
-    if (event.target.checked) {
-      const newSelecteds = projects?.map((n) => n.name);
-      setSelected(newSelecteds);
-      return;
-    }
-    setSelected([]);
-  };
+  useEffect(() => {
+    const data = getProjectById(id);
+    if (!data) return navigate(`/dashboard/projects`);
+
+    console.log('testId', testId);
+    setProject(data);
+    let newTest = data.tests?.find((el) => el._id === testId.toString());
+
+    if (!newTest) return navigate(`/dashboard/projects/${id}`);
+
+    setTest(newTest);
+  }, [id, loading, projects]);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -130,27 +118,39 @@ export default function User() {
     setFilterName(event.target.value);
   };
 
+  const handleRequestSort = (event, property) => {
+    const isAsc = orderBy === property && order === 'asc';
+    setOrder(isAsc ? 'desc' : 'asc');
+    setOrderBy(property);
+  };
+
+  const handleSelectAllClick = (event) => {
+    if (event.target.checked) {
+      const newSelecteds = project?.tests?.map((n) => n.name);
+      setSelected(newSelecteds);
+      return;
+    }
+    setSelected([]);
+  };
+
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (projects?.length || 0))
+      ? Math.max(0, (1 + page) * rowsPerPage - (project?.tests?.length || 0))
       : 0;
 
   const filteredData = applySortFilter(
-    projects,
+    project?.tests || [],
     getComparator(order, orderBy),
     filterName
   );
 
   const isUserNotFound = filteredData.length === 0;
 
-  const handleDelete = () => {
-    // toggleDelOpen();
-    console.log(`selected`, selected);
-    // deleteManager(selected, toggleDelOpen);
-  };
+  if (!project) return <></>;
+  if (!test) return <></>;
 
   return (
-    <Page title='Dashboard | Projects '>
+    <Page title={`Project | ${project.name}`}>
       <Container>
         <Stack
           direction='row'
@@ -159,19 +159,47 @@ export default function User() {
           mb={5}
         >
           <Typography variant='h4' gutterBottom>
-            Projects
+            Project {project.name}
           </Typography>
-          {user && user.role === 'admin' && (
-            <Button
-              variant='contained'
-              onClick={toggleCreateOpen}
-              startIcon={<Icon icon={plusFill} />}
-            >
-              New Project
-            </Button>
-          )}
         </Stack>
-
+        <Box mb={2}>
+          <TextField
+            variant='outlined'
+            name='name'
+            value={test.name}
+            onChange={handleTxtChange}
+            label='Name'
+          />
+          <TextField
+            variant='outlined'
+            name='language'
+            value={test.language}
+            onChange={handleTxtChange}
+            label='Language'
+          />
+          <TextField
+            variant='outlined'
+            name='preRequiste'
+            value={test.preRequiste}
+            onChange={handleTxtChange}
+            label='PreRequiste'
+          />
+          <TextField
+            variant='outlined'
+            name='priority'
+            value={test.priority}
+            onChange={handleTxtChange}
+            label='Priority'
+          />
+          <TextField
+            variant='outlined'
+            name='difficultyLevel'
+            value={test.difficultyLevel}
+            onChange={handleTxtChange}
+            label='Difficulty Level'
+          />
+        </Box>
+        <Typography variant='h5'>Test Cases</Typography>
         <Card>
           <UserListToolbar
             numSelected={selected?.length}
@@ -187,7 +215,7 @@ export default function User() {
                   order={order}
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
-                  rowCount={projects?.length || 0}
+                  rowCount={project?.tests?.length || 0}
                   numSelected={selected?.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
@@ -209,7 +237,7 @@ export default function User() {
                                 textDecoration: 'none',
                               }}
                             >
-                              {Array(9)
+                              {Array(6)
                                 .fill()
                                 .map(() => (
                                   <TableCell key={v4()} align='right'>
@@ -219,13 +247,20 @@ export default function User() {
                             </TableRow>
                           );
                         })
-                    : filteredData
+                    : project.tests
                         .slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
                         )
                         .map((row) => {
-                          const { _id, name, createdAt } = row;
+                          const {
+                            _id,
+                            name,
+                            language,
+                            preRequiste,
+                            priority,
+                            difficultyLevel,
+                          } = row;
                           const isItemSelected = selected?.indexOf(name) !== -1;
 
                           return (
@@ -253,41 +288,23 @@ export default function User() {
                                   </Typography>
                                 </Stack>
                               </TableCell>
+                              <TableCell align='left'>{language}</TableCell>
+                              <TableCell align='left'>{preRequiste}</TableCell>
+                              <TableCell align='left'>{priority}</TableCell>
                               <TableCell align='left'>
-                                {new Date(createdAt).toDateString()}
-                              </TableCell>
-                              <TableCell align='left'>
-                                {row?.tests?.length}
+                                {difficultyLevel}
                               </TableCell>
                               {user && user.role === 'admin' && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
                                     currentProject={row}
                                     viewTask
-                                    viewLink={`/dashboard/projects/${_id}`}
-                                    toggleDelOpen={toggleDelOpen}
-                                    toggleEditOpen={toggleEditOpen}
+                                    viewLink={`/dashboard/projects/${id}/tests/${_id}`}
+                                    // toggleDelOpen={toggleDelOpen}
+                                    // toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
-                                    // addToTable={!manager}
-                                    // toggleAddToOpen={() => {
-                                    //   setSelectedTask(_id);
-                                    //   toggleAddToOpen();
-                                    // }}
-                                    // handleRemoveFrom={() => {
-                                    //   console.clear();
-                                    //   console.log(`row`, row);
-                                    //   console.log(`_id`, _id);
-                                    //   console.log(
-                                    //     `manager._id`,
-                                    //     manager._id
-                                    //   );
-                                    //   const managerId =
-                                    //     manager._id || manager;
-                                    //   unAssignTaskFromManger(
-                                    //     _id,
-                                    //     managerId
-                                    //   );
-                                    // }}
+                                    user={user}
+                                    isProject
                                   />
                                 </TableCell>
                               )}
@@ -316,39 +333,16 @@ export default function User() {
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
             component='div'
-            count={projects?.length || 0}
+            count={project?.tests?.length || 0}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
         </Card>
-      </Container>
-
-      {/* <ConfirmDeleteModal
-        open={isDelOpen}
-        toggleDialog={toggleDelOpen}
-        dialogTitle='Delete This Manager ?'
-        success={handleDelete}
-      /> */}
-
-      <AddorEditModal
-        isOpen={isCreateOpen}
-        // createNew={(...props) => {
-        //   addNewManager(...props, toggleCreateOpen);
-        // }}
-        closeDialog={toggleCreateOpen}
-      />
-      {/* <AddorEditModal
-        isOpen={isEditOpen}
-        closeDialog={toggleEditOpen}
-        // updateUser={(...props) => {
-        //   editManager(...props, toggleEditOpen);
-        // }}
-        editUser={selected}
-        isEdit
-        role='Manager'
-      /> */}
+      </Container>{' '}
     </Page>
   );
-}
+};
+
+export default TestDetails;
