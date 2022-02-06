@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Container,
   Skeleton,
@@ -17,6 +18,7 @@ import { filter } from 'lodash';
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Page from 'src/components/Page';
 import Scrollbar from 'src/components/Scrollbar';
 import SearchNotFound from 'src/components/SearchNotFound';
@@ -27,14 +29,20 @@ import {
 } from 'src/components/_dashboard/user';
 import { AuthContext } from 'src/Contexts/AuthContext';
 import { ProjectsContext } from 'src/Contexts/ProjectsContext';
+import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
+import { useToggleInput } from 'src/hooks';
+import { handleCatch, makeReq } from 'src/utils/makeReq';
 import v4 from 'uuid/dist/v4';
+import ManageScanerio from './AddScanerios';
 
 const TABLE_HEAD = [
-  { _id: 'name', label: 'Name', alignRight: false },
-  { _id: 'language', label: 'Language', alignRight: false },
-  { _id: 'preRequiste', label: 'PreRequiste', alignRight: false },
-  { _id: 'priority', label: 'Priority', alignRight: false },
-  { _id: 'difficultyLevel', label: 'Difficulty Level', alignRight: false },
+  { _id: 'action', label: 'Action', alignRight: false },
+  { _id: 'inputs', label: 'Inputs', alignRight: false },
+  { _id: 'expectedOutput', label: 'ExpectedOutput', alignRight: false },
+  { _id: 'actualOutput', label: 'ActualOutput', alignRight: false },
+  { _id: 'testResults', label: 'TestResults', alignRight: false },
+  { _id: 'testComments', label: 'TestComments', alignRight: false },
+
   { _id: '' },
 ];
 
@@ -84,6 +92,9 @@ const TestDetails = () => {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isAddOpen, toggleAddScanerios] = useToggleInput(false);
+  const [isDeleteOpen, toggleDelOpen] = useToggleInput(false);
+  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
 
   const { id, testId } = useParams();
   const navigate = useNavigate();
@@ -144,7 +155,87 @@ const TestDetails = () => {
     filterName
   );
 
+  const handleSave = async () => {
+    try {
+      const resData = await makeReq(
+        `/projects/test/${testId}`,
+        { body: { ...test } },
+        'PATCH'
+      );
+      console.log('resData', resData);
+      setTest(resData.test);
+      toast.success('Test Updated Successfully!');
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+  };
+
   const isUserNotFound = filteredData.length === 0;
+
+  const handleAddScanerio = async (newState) => {
+    try {
+      toggleAddScanerios();
+      const resData = await makeReq(
+        `/projects/tests/${testId}/scenario`,
+        { body: { ...newState } },
+        'POST'
+      );
+      console.log('resData', resData);
+      setTest((st) => ({
+        ...st,
+        scenarios: [...st.scenarios, resData.scenario],
+      }));
+      toast.success('Scanerios Added Successfully!');
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+    console.log('newState', newState);
+  };
+  const handleUpdateScanerio = async (newState) => {
+    try {
+      toggleEditOpen();
+      const resData = await makeReq(
+        `/projects/scenario/${selected?._id}`,
+        { body: { ...newState } },
+        'PATCH'
+      );
+      toast.success('Scanerios Updated Successfully!');
+
+      setTest((st) => ({
+        ...st,
+        scenarios: st.scenarios.map((el) =>
+          el._id === resData.scenario._id ? resData.scenario : el
+        ),
+      }));
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+    console.log('newState', newState);
+  };
+  const handleDeleteScanerio = async (newState) => {
+    try {
+      toggleDelOpen();
+      const resData = await makeReq(
+        `/projects/scenario/${selected}`,
+        {},
+        'DELETE'
+      );
+      toast.success('Scanerios Deleted Successfully!');
+
+      setTest((st) => ({
+        ...st,
+        scenarios: st.scenarios.filter((el) => el._id !== selected),
+      }));
+      setSelected(null);
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+    console.log('newState', newState);
+  };
 
   if (!project) return <></>;
   if (!test) return <></>;
@@ -162,7 +253,15 @@ const TestDetails = () => {
             Project {project.name}
           </Typography>
         </Stack>
-        <Box mb={2}>
+
+        <Box
+          mb={2}
+          style={{
+            display: 'flex',
+            gap: 20,
+            flexWrap: 'wrap',
+          }}
+        >
           <TextField
             variant='outlined'
             name='name'
@@ -198,8 +297,20 @@ const TestDetails = () => {
             onChange={handleTxtChange}
             label='Difficulty Level'
           />
+          <Button variant='contained' color='primary' onClick={handleSave}>
+            Save
+          </Button>
         </Box>
-        <Typography variant='h5'>Test Cases</Typography>
+
+        <Button
+          variant='contained'
+          color='secondary'
+          onClick={toggleAddScanerios}
+          sx={{ mb: 1 }}
+        >
+          Add New Scenario
+        </Button>
+        <Typography variant='h5'>Scanerios</Typography>
         <Card>
           <UserListToolbar
             numSelected={selected?.length}
@@ -247,21 +358,21 @@ const TestDetails = () => {
                             </TableRow>
                           );
                         })
-                    : project.tests
-                        .slice(
+                    : test.scenarios
+                        ?.slice(
                           page * rowsPerPage,
                           page * rowsPerPage + rowsPerPage
                         )
                         .map((row) => {
                           const {
                             _id,
-                            name,
-                            language,
-                            preRequiste,
-                            priority,
-                            difficultyLevel,
+                            action,
+                            inputs,
+                            expectedOutput,
+                            actualOutput,
+                            testResults,
+                            testComments,
                           } = row;
-                          const isItemSelected = selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -269,8 +380,6 @@ const TestDetails = () => {
                               key={_id}
                               tabIndex={-1}
                               role='checkbox'
-                              selected={isItemSelected}
-                              aria-checked={isItemSelected}
                             >
                               <TableCell padding='checkbox'></TableCell>
                               <TableCell
@@ -284,27 +393,29 @@ const TestDetails = () => {
                                   spacing={2}
                                 >
                                   <Typography variant='subtitle2' noWrap>
-                                    {name}
+                                    {action}
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align='left'>{language}</TableCell>
-                              <TableCell align='left'>{preRequiste}</TableCell>
-                              <TableCell align='left'>{priority}</TableCell>
+                              <TableCell align='left'>{inputs}</TableCell>
                               <TableCell align='left'>
-                                {difficultyLevel}
+                                {expectedOutput}
                               </TableCell>
+                              <TableCell align='left'>{actualOutput}</TableCell>
+                              <TableCell align='left'>{testResults}</TableCell>
+                              <TableCell align='left'>{testComments}</TableCell>
                               {user && user.role === 'admin' && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
                                     currentProject={row}
                                     viewTask
                                     viewLink={`/dashboard/projects/${id}/tests/${_id}`}
-                                    // toggleDelOpen={toggleDelOpen}
-                                    // toggleEditOpen={toggleEditOpen}
+                                    toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
                                     user={user}
                                     isProject
+                                    isScanerio
                                   />
                                 </TableCell>
                               )}
@@ -329,6 +440,18 @@ const TestDetails = () => {
               </Table>
             </TableContainer>
           </Scrollbar>
+          <ManageScanerio
+            open={isAddOpen}
+            toggleDialog={toggleAddScanerios}
+            onSuccess={handleAddScanerio}
+          />
+          <ManageScanerio
+            open={isEditOpen}
+            toggleDialog={toggleEditOpen}
+            onSuccess={handleUpdateScanerio}
+            update
+            scenario={selected}
+          />
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}
@@ -338,6 +461,12 @@ const TestDetails = () => {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <ConfirmDelete
+            open={isDeleteOpen}
+            toggleDialog={toggleDelOpen}
+            dialogTitle='Delete Test Scanerio ? '
+            success={handleDeleteScanerio}
           />
         </Card>
       </Container>{' '}

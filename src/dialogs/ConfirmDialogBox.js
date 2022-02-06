@@ -19,36 +19,36 @@ const useStyles = makeStyles({
   Title: {
     // width: '300px',
     '& h2': {
-      fontFamily: 'sans-serif'
-    }
+      fontFamily: 'sans-serif',
+    },
   },
   List: {
     '& span': {
-      fontFamily: 'sans-serif'
-    }
+      fontFamily: 'sans-serif',
+    },
   },
   yesIcon: {
     backgroundColor: green[100],
-    color: green[600]
+    color: green[600],
   },
   cancelIcon: {
     backgroundColor: red[100],
-    color: red[600]
-  }
+    color: red[600],
+  },
 });
 
-export default function DeletePaletteConfirm(props) {
+export default function ConfirmDelete(props) {
   const { open, toggleDialog, dialogTitle, success } = props;
   const classes = useStyles();
 
   return (
     <Dialog
       onClose={toggleDialog}
-      aria-labelledby="simple-dialog-title"
+      aria-labelledby='simple-dialog-title'
       open={open}
       className={classes.root}
     >
-      <DialogTitle id="simple-dialog-title" className={classes.Title}>
+      <DialogTitle id='simple-dialog-title' className={classes.Title}>
         {dialogTitle}
       </DialogTitle>
       <List className={classes.List}>
@@ -58,7 +58,7 @@ export default function DeletePaletteConfirm(props) {
               <CheckIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Yes" />
+          <ListItemText primary='Yes' />
         </ListItem>
 
         <ListItem button onClick={toggleDialog} key={uuid()}>
@@ -67,7 +67,7 @@ export default function DeletePaletteConfirm(props) {
               <CancelIcon />
             </Avatar>
           </ListItemAvatar>
-          <ListItemText primary="Cancel" />
+          <ListItemText primary='Cancel' />
         </ListItem>
       </List>
     </Dialog>

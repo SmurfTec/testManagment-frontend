@@ -36,6 +36,8 @@ import v4 from 'uuid/dist/v4';
 import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import AddorEditModal from 'src/dialogs/AddorEditModal';
+import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
+import { useToggleInput } from 'src/hooks';
 
 // ----------------------------------------------------------------------
 
@@ -84,7 +86,11 @@ export default function User() {
   const [page, setPage] = useState(0);
 
   const { user, loading } = useContext(AuthContext);
-  const { projects, loading: projectLoading } = useContext(ProjectsContext);
+  const {
+    projects,
+    loading: projectLoading,
+    deleteProject,
+  } = useContext(ProjectsContext);
 
   console.log('PROJECTS', projects);
 
@@ -94,13 +100,9 @@ export default function User() {
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
 
-  const [isDelOpen, setIsDelOpen] = useState(false);
-  const [isEditOpen, setIsEditOpen] = useState(false);
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-
-  const toggleDelOpen = () => setIsDelOpen((st) => !st);
-  const toggleEditOpen = () => setIsEditOpen((st) => !st);
-  const toggleCreateOpen = () => setIsCreateOpen((st) => !st);
+  const [isCreateOpen, toggleCreateOpen] = useState(false);
+  const [isDeleteOpen, toggleDelOpen] = useToggleInput(false);
+  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -119,6 +121,13 @@ export default function User() {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleDeleteProject = async (newState) => {
+    toggleDelOpen();
+    deleteProject(selected);
+    setSelected(null);
+    console.log('newState', newState);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -321,6 +330,13 @@ export default function User() {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+
+          <ConfirmDelete
+            open={isDeleteOpen}
+            toggleDialog={toggleDelOpen}
+            dialogTitle='Delete Project ? '
+            success={handleDeleteProject}
           />
         </Card>
       </Container>

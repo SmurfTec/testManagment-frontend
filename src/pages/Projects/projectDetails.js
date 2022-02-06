@@ -17,6 +17,7 @@ import { filter } from 'lodash';
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'react-toastify';
 import Page from 'src/components/Page';
 import Scrollbar from 'src/components/Scrollbar';
 import SearchNotFound from 'src/components/SearchNotFound';
@@ -27,6 +28,9 @@ import {
 } from 'src/components/_dashboard/user';
 import { AuthContext } from 'src/Contexts/AuthContext';
 import { ProjectsContext } from 'src/Contexts/ProjectsContext';
+import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
+import { useToggleInput } from 'src/hooks';
+import { handleCatch, makeReq } from 'src/utils/makeReq';
 import v4 from 'uuid/dist/v4';
 
 const TABLE_HEAD = [
@@ -35,6 +39,7 @@ const TABLE_HEAD = [
   { _id: 'preRequiste', label: 'PreRequiste', alignRight: false },
   { _id: 'priority', label: 'Priority', alignRight: false },
   { _id: 'difficultyLevel', label: 'Difficulty Level', alignRight: false },
+  { _id: 'scenarios', label: 'Scanerios', alignRight: false },
   { _id: '' },
 ];
 
@@ -83,6 +88,8 @@ const ProjectDetails = () => {
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
   const [rowsPerPage, setRowsPerPage] = useState(5);
+  const [isDeleteOpen, toggleDelOpen] = useToggleInput(false);
+  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
 
   const [projectState, setProjectState] = useState({
     name: '',
@@ -107,6 +114,24 @@ const ProjectDetails = () => {
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
+  };
+
+  const handleDeleteTest = async (newState) => {
+    try {
+      toggleDelOpen();
+      const resData = await makeReq(`/projects/test/${selected}`, {}, 'DELETE');
+      toast.success('Test Deleted Successfully!');
+
+      setProject((st) => ({
+        ...st,
+        tests: st.tests.filter((el) => el._id !== selected),
+      }));
+      setSelected(null);
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+    console.log('newState', newState);
   };
 
   const handleChangeRowsPerPage = (event) => {
@@ -223,6 +248,7 @@ const ProjectDetails = () => {
                             preRequiste,
                             priority,
                             difficultyLevel,
+                            scenarios,
                           } = row;
                           const isItemSelected = selected?.indexOf(name) !== -1;
 
@@ -257,14 +283,17 @@ const ProjectDetails = () => {
                               <TableCell align='left'>
                                 {difficultyLevel}
                               </TableCell>
+                              <TableCell align='left'>
+                                {scenarios?.length || 0}
+                              </TableCell>
                               {user && user.role === 'admin' && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
                                     currentProject={row}
                                     viewTask
                                     viewLink={`/dashboard/projects/${id}/tests/${_id}`}
-                                    // toggleDelOpen={toggleDelOpen}
-                                    // toggleEditOpen={toggleEditOpen}
+                                    toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
                                     user={user}
                                     isProject
@@ -292,6 +321,13 @@ const ProjectDetails = () => {
               </Table>
             </TableContainer>
           </Scrollbar>
+
+          <ConfirmDelete
+            open={isDeleteOpen}
+            toggleDialog={toggleDelOpen}
+            dialogTitle='Delete Test Scanerio ? '
+            success={handleDeleteTest}
+          />
 
           <TablePagination
             rowsPerPageOptions={[5, 10, 25]}

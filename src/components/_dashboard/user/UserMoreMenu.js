@@ -24,6 +24,7 @@ export default function UserMoreMenu({
   viewTask,
   viewLink,
   isProject = false,
+  isScanerio = false,
 }) {
   const navigate = useNavigate();
   const ref = useRef(null);
@@ -86,8 +87,11 @@ export default function UserMoreMenu({
           sx={{ color: 'text.secondary' }}
           onClick={(e) => {
             e.stopPropagation();
-            navigate(viewLink, { replace: true });
+            if (isScanerio) {
+              handleEdit(e);
+            } else navigate(viewLink, { replace: true });
           }}
+          // onClick={}
         >
           <ListItemIcon>
             <Icon icon={editFill} width={24} height={24} />
