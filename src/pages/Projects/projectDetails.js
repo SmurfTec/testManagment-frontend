@@ -1,4 +1,5 @@
 import {
+  Button,
   Card,
   Container,
   Skeleton,
@@ -32,6 +33,7 @@ import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
 import { useToggleInput } from 'src/hooks';
 import { handleCatch, makeReq } from 'src/utils/makeReq';
 import v4 from 'uuid/dist/v4';
+import AddTestCase from './AddTestCase';
 
 const TABLE_HEAD = [
   { _id: 'name', label: 'Name', alignRight: false },
@@ -91,6 +93,8 @@ const ProjectDetails = () => {
   const [isDeleteOpen, toggleDelOpen] = useToggleInput(false);
   const [isEditOpen, toggleEditOpen] = useToggleInput(false);
 
+  const [isAddTestOpen, toggleAddTestOpen] = useToggleInput(false);
+
   const [projectState, setProjectState] = useState({
     name: '',
     language: '',
@@ -127,6 +131,27 @@ const ProjectDetails = () => {
         tests: st.tests.filter((el) => el._id !== selected),
       }));
       setSelected(null);
+    } catch (err) {
+      handleCatch(err);
+    } finally {
+    }
+    console.log('newState', newState);
+  };
+
+  const createtestCase = async (newState) => {
+    try {
+      toggleAddTestOpen();
+      const resData = await makeReq(
+        `/projects/${id}/tests`,
+        { body: newState },
+        'POST'
+      );
+      toast.success('Test Created Successfully!');
+
+      setProject((st) => ({
+        ...st,
+        tests: [resData.test, ...st.tests],
+      }));
     } catch (err) {
       handleCatch(err);
     } finally {
@@ -195,6 +220,14 @@ const ProjectDetails = () => {
             onFilterName={handleFilterByName}
             slug='Users'
           />
+
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={toggleAddTestOpen}
+          >
+            New Test Case
+          </Button>
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -337,6 +370,11 @@ const ProjectDetails = () => {
             page={page}
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
+          />
+          <AddTestCase
+            open={isAddTestOpen}
+            toggleDialog={toggleAddTestOpen}
+            onSuccess={createtestCase}
           />
         </Card>
       </Container>{' '}
