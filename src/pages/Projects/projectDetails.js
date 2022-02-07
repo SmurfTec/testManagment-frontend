@@ -10,10 +10,8 @@ import {
   TableContainer,
   TablePagination,
   TableRow,
-  TextField,
   Typography,
 } from '@mui/material';
-import { Box, typography } from '@mui/system';
 import { filter } from 'lodash';
 
 import React, { useContext, useEffect, useState } from 'react';
@@ -226,6 +224,14 @@ const ProjectDetails = () => {
           <Typography variant='h4' gutterBottom>
             Project {project.name}
           </Typography>
+          <Button
+            variant='contained'
+            color='primary'
+            style={{ float: 'right' }}
+            onClick={toggleAddTestOpen}
+          >
+            New Test Case
+          </Button>
         </Stack>
 
         <Typography variant='h5'>Test Cases</Typography>
@@ -236,14 +242,6 @@ const ProjectDetails = () => {
             onFilterName={handleFilterByName}
             slug='Users'
           />
-
-          <Button
-            variant='contained'
-            color='primary'
-            onClick={toggleAddTestOpen}
-          >
-            New Test Case
-          </Button>
 
           <Scrollbar>
             <TableContainer sx={{ minWidth: 800 }}>
@@ -345,7 +343,7 @@ const ProjectDetails = () => {
                               <TableCell align='left'>
                                 {scenarios?.length || 0}
                               </TableCell>
-                              {user && user.role === 'admin' && (
+                              {user && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
                                     currentProject={row}

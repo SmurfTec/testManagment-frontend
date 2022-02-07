@@ -75,7 +75,8 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -142,7 +143,10 @@ export default function User() {
 
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (projects?.length || 0))
+      ? Math.max(
+          0,
+          (1 + page) * rowsPerPage - (projects?.length || 0)
+        )
       : 0;
 
   const filteredData = applySortFilter(
@@ -165,7 +169,7 @@ export default function User() {
           <Typography variant='h4' gutterBottom>
             Projects
           </Typography>
-          {user && user.role === 'admin' && (
+          {user && user.role !== 'tester' && (
             <Button
               variant='contained'
               onClick={toggleCreateOpen}
@@ -230,7 +234,8 @@ export default function User() {
                         )
                         .map((row) => {
                           const { _id, name, createdAt } = row;
-                          const isItemSelected = selected?.indexOf(name) !== -1;
+                          const isItemSelected =
+                            selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -252,7 +257,10 @@ export default function User() {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Typography variant='subtitle2' noWrap>
+                                  <Typography
+                                    variant='subtitle2'
+                                    noWrap
+                                  >
                                     {name}
                                   </Typography>
                                 </Stack>
@@ -263,13 +271,44 @@ export default function User() {
                               <TableCell align='left'>
                                 {row?.tests?.length}
                               </TableCell>
-                              {user && user.role === 'admin' && (
+                              {user && user.role !== 'tester' && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
                                     currentProject={row}
                                     viewTask
                                     viewLink={`/dashboard/projects/${_id}`}
                                     toggleDelOpen={toggleDelOpen}
+                                    toggleEditOpen={toggleEditOpen}
+                                    setSelected={setSelected}
+                                    // addToTable={!manager}
+                                    // toggleAddToOpen={() => {
+                                    //   setSelectedTask(_id);
+                                    //   toggleAddToOpen();
+                                    // }}
+                                    // handleRemoveFrom={() => {
+                                    //   console.clear();
+                                    //   console.log(`row`, row);
+                                    //   console.log(`_id`, _id);
+                                    //   console.log(
+                                    //     `manager._id`,
+                                    //     manager._id
+                                    //   );
+                                    //   const managerId =
+                                    //     manager._id || manager;
+                                    //   unAssignTaskFromManger(
+                                    //     _id,
+                                    //     managerId
+                                    //   );
+                                    // }}
+                                  />
+                                </TableCell>
+                              )}
+                              {user && user.role === 'tester' && (
+                                <TableCell align='right'>
+                                  <UserMoreMenu
+                                    currentProject={row}
+                                    viewTask
+                                    viewLink={`/dashboard/projects/${_id}`}
                                     toggleEditOpen={toggleEditOpen}
                                     setSelected={setSelected}
                                     // addToTable={!manager}
@@ -307,7 +346,11 @@ export default function User() {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
