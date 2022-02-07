@@ -1,23 +1,20 @@
 import React, { useState, useEffect, useContext } from 'react';
-import Button from '@material-ui/core/Button';
-import TextField from '@material-ui/core/TextField';
-import Dialog from '@material-ui/core/Dialog';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Dialog from '@mui/material/Dialog';
 
-import DialogActions from '@material-ui/core/DialogActions';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogTitle from '@material-ui/core/DialogTitle';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogTitle from '@mui/material/DialogTitle';
 // import DateTimePicker from 'react-datetime-picker';
-import { v4 as uuid } from 'uuid';
-import { makeStyles } from '@material-ui/styles';
+import { makeStyles } from '@mui/styles';
 
 import { toast } from 'react-toastify';
 // import { AuthContext } from 'src/contexts/AuthContext';
 
 const useStyles = makeStyles((props) => ({
   Dialog: {
-    '& .MuiDialog-paper': {
-      minHeight: 250,
-    },
+    '& .MuiDialog-paper': {},
   },
   addBtn: {},
   cancelBtn: {},
@@ -64,6 +61,7 @@ const AddorEditModal = (props) => {
   };
 
   const handleSubmit = (e) => {
+    console.log('asdasd');
     if (!state.name) {
       toast.error('Plz fill in all fields before creating task');
       return;
@@ -107,18 +105,10 @@ const AddorEditModal = (props) => {
           />
         </DialogContent>
         <DialogActions>
-          <Button
-            onClick={handleSubmit}
-            variant='contained'
-            color='primary'
-          >
+          <Button onClick={handleSubmit} variant='contained' color='primary'>
             {isEdit === true ? 'Update' : 'Create'}
           </Button>
-          <Button
-            onClick={handleClose}
-            variant='contained'
-            color='error'
-          >
+          <Button onClick={handleClose} variant='contained' color='error'>
             Cancel
           </Button>
         </DialogActions>

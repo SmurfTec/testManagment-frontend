@@ -75,8 +75,7 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) =>
-        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -143,10 +142,7 @@ export default function User() {
 
   const emptyRows =
     page > 0
-      ? Math.max(
-          0,
-          (1 + page) * rowsPerPage - (projects?.length || 0)
-        )
+      ? Math.max(0, (1 + page) * rowsPerPage - (projects?.length || 0))
       : 0;
 
   const filteredData = applySortFilter(
@@ -234,8 +230,7 @@ export default function User() {
                         )
                         .map((row) => {
                           const { _id, name, createdAt } = row;
-                          const isItemSelected =
-                            selected?.indexOf(name) !== -1;
+                          const isItemSelected = selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -257,10 +252,7 @@ export default function User() {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Typography
-                                    variant='subtitle2'
-                                    noWrap
-                                  >
+                                  <Typography variant='subtitle2' noWrap>
                                     {name}
                                   </Typography>
                                 </Stack>
@@ -315,11 +307,7 @@ export default function User() {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell
-                        align='center'
-                        colSpan={6}
-                        sx={{ py: 3 }}
-                      >
+                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
@@ -351,6 +339,7 @@ export default function User() {
       <AddorEditModal
         isOpen={isCreateOpen}
         createNew={(...props) => {
+          console.log('adhas');
           createProject(...props, toggleCreateOpen);
         }}
         closeDialog={toggleCreateOpen}
