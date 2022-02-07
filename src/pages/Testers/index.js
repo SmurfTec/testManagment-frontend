@@ -25,7 +25,7 @@ import {
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
-import AddorEditModal from 'src/dialogs/AddorEditModal';
+import UserModal from 'src/dialogs/UserModal';
 import {
   UserListHead,
   UserListToolbar,
@@ -83,7 +83,8 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
-  const { users, deleteUser, loading } = useContext(UsersContext);
+  const { users, deleteUser, createUser, loading } =
+    useContext(UsersContext);
   const { user, loading: userLoading } = useContext(AuthContext);
 
   const [page, setPage] = useState(0);
@@ -356,11 +357,11 @@ export default function User() {
         dialogTitle='Delete Tester ? '
         success={handleDelete}
       />
-      <AddorEditModal
+      <UserModal
         isOpen={isCreateOpen}
-        // createNew={(...props) => {
-        //   addNewManager(...props, toggleCreateOpen);
-        // }}
+        createNew={(...props) => {
+          createUser(...props, toggleCreateOpen);
+        }}
         closeDialog={toggleCreateOpen}
       />
     </Page>

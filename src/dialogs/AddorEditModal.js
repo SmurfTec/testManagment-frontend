@@ -45,8 +45,6 @@ const AddorEditModal = (props) => {
 
   const [state, setState] = useState(initialState);
 
-  console.log('State', state);
-
   useEffect(() => {
     // TODO
     if (isEdit === true && editUser) {

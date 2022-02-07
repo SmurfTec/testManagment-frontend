@@ -24,7 +24,7 @@ import {
 } from '@mui/material';
 
 // components
-import AddorEditModal from 'src/dialogs/AddorEditModal';
+import UserModal from 'src/dialogs/UserModal';
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
@@ -86,7 +86,10 @@ function applySortFilter(array, comparator, query) {
 export default function User() {
   const [page, setPage] = useState(0);
   //*
-  const { users, deleteUser, loading } = useContext(UsersContext);
+
+  const { users, deleteUser, createUser, loading } =
+    useContext(UsersContext);
+
   const { user, loading: userLoading } = useContext(AuthContext);
 
   const [order, setOrder] = useState('asc');
@@ -364,11 +367,12 @@ export default function User() {
         dialogTitle='Delete QaManager ? '
         success={handleDelete}
       />
-      <AddorEditModal
+
+      <UserModal
         isOpen={isCreateOpen}
-        // createNew={(...props) => {
-        //   addNewManager(...props, toggleCreateOpen);
-        // }}
+        createNew={(...props) => {
+          createUser(...props, toggleCreateOpen);
+        }}
         closeDialog={toggleCreateOpen}
       />
     </Page>

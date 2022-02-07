@@ -6,12 +6,10 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
-// import DateTimePicker from 'react-datetime-picker';
 import { v4 as uuid } from 'uuid';
 import { makeStyles } from '@material-ui/styles';
 
 import { toast } from 'react-toastify';
-// import { AuthContext } from 'src/contexts/AuthContext';
 
 const useStyles = makeStyles((props) => ({
   Dialog: {
@@ -23,17 +21,7 @@ const useStyles = makeStyles((props) => ({
   cancelBtn: {},
 }));
 
-const initialStageState = {
-  name: '',
-};
-
 const UserModal = (props) => {
-  const [stages, setStages] = useState([
-    { ...initialStageState, _id: uuid() },
-  ]);
-
-  // const { user, loading } = useContext(AuthContext);
-
   const {
     isOpen,
     closeDialog,
@@ -49,9 +37,15 @@ const UserModal = (props) => {
 
   const initialState = {
     name: '',
+    email: '',
+    password: '',
+    passwordConfirm: '',
+    role: '',
   };
 
   const [state, setState] = useState(initialState);
+
+  console.log('STATE', state);
 
   useEffect(() => {
     // TODO
@@ -61,7 +55,6 @@ const UserModal = (props) => {
       });
     } else {
       setState(initialState);
-      setStages([initialStageState]);
     }
   }, [editUser, isEdit]);
 
@@ -78,7 +71,13 @@ const UserModal = (props) => {
       // updateUser();
     } else {
     }
-    createNew();
+    createNew({
+      name: state.name,
+      email: state.email,
+      password: state.password,
+      passwordConfirm: state.passwordConfirm,
+      role: state.role,
+    });
 
     e.preventDefault();
   };
@@ -111,6 +110,50 @@ const UserModal = (props) => {
             name='name'
             onChange={handleChange}
             disabled={viewOnly}
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='email'
+            label='Email'
+            type='text'
+            fullWidth
+            value={state.email}
+            name='email'
+            onChange={handleChange}
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='password'
+            label='Password'
+            type='password'
+            fullWidth
+            value={state.password}
+            name='password'
+            onChange={handleChange}
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='passwordConfirm'
+            label='PasswordConfirm'
+            type='password'
+            fullWidth
+            value={state.passwordConfirm}
+            name='passwordConfirm'
+            onChange={handleChange}
+          />
+          <TextField
+            autoFocus
+            margin='dense'
+            id='role'
+            label='Role'
+            type='role'
+            fullWidth
+            value={state.role}
+            name='role'
+            onChange={handleChange}
           />
         </DialogContent>
         <DialogActions>

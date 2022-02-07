@@ -47,7 +47,7 @@ export const UsersProvider = ({ children }) => {
   const createUser = async (state, callback) => {
     try {
       const resData = await makeReq(
-        `/users`,
+        `/auth/signup`,
         { body: state },
         'POST'
       );
