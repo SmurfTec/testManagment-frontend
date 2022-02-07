@@ -18,7 +18,7 @@ import {
   Typography,
   TableContainer,
   TablePagination,
-  Checkbox
+  Checkbox,
 } from '@material-ui/core';
 // components
 // import Skeleton from '@material-ui/lab/Skeleton';
@@ -26,7 +26,10 @@ import Skeleton from 'react-loading-skeleton';
 
 import Scrollbar from '../components/Scrollbar';
 import SearchNotFound from '../components/SearchNotFound';
-import { UserListHead, UserListToolbar } from '../components/_dashboard/user';
+import {
+  UserListHead,
+  UserListToolbar,
+} from '../components/_dashboard/user';
 //
 
 import { DataContext } from 'contexts/DataContext';
@@ -38,9 +41,9 @@ const Styles = {
   Dialog: {
     '& .MuiDialog-paper': {
       maxWidth: 'unset',
-      width: 800
-    }
-  }
+      width: 800,
+    },
+  },
 };
 
 const TABLE_HEAD = [
@@ -50,7 +53,7 @@ const TABLE_HEAD = [
   { id: 'tasks', label: 'Tasks', alignRight: false },
   // { id: 'isVerified', label: 'Verified', alignRight: false },
   // { id: 'status', label: 'Status', alignRight: false },
-  { id: '' }
+  { id: '' },
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -64,7 +67,16 @@ function descendingComparator(a, b, orderBy) {
 }
 
 const AddToTableModal = (props) => {
-  const { isOpen, closeDialog, classes, targetId, data, addAction, slug, resource } = props;
+  const {
+    isOpen,
+    closeDialog,
+    classes,
+    targetId,
+    data,
+    addAction,
+    slug,
+    resource,
+  } = props;
 
   const [filteredGroups, setFilteredGroups] = useState([]);
   const [page, setPage] = useState(0);
@@ -101,7 +113,11 @@ const AddToTableModal = (props) => {
       return a[1] - b[1];
     });
     if (query) {
-      return filter(array, (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1);
+      return filter(
+        array,
+        (_user) =>
+          _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      );
     }
     return stabilizedThis.map((el) => el[0]);
   }
@@ -138,13 +154,18 @@ const AddToTableModal = (props) => {
     setFilterName(event.target.value);
   };
 
-  const emptyRows = page > 0 && data ? Math.max(0, (1 + page) * rowsPerPage - data.length) : 0;
+  const emptyRows =
+    page > 0 && data
+      ? Math.max(0, (1 + page) * rowsPerPage - data.length)
+      : 0;
 
   const isUserNotFound = filteredGroups.length === 0;
 
   useEffect(() => {
     if (!data || data === null) return;
-    setFilteredGroups(applySortFilter(data, getComparator(order, orderBy), filterName));
+    setFilteredGroups(
+      applySortFilter(data, getComparator(order, orderBy), filterName)
+    );
   }, [data, order, orderBy, filterName]);
 
   const isAlreadyHere = (target, array) => {
@@ -161,16 +182,18 @@ const AddToTableModal = (props) => {
         className={classes.Dialog}
         open={isOpen}
         onClose={closeDialog}
-        aria-labelledby="form-dialog-title"
+        aria-labelledby='form-dialog-title'
       >
-        <DialogTitle id="form-dialog-title">Add {resource} to Group</DialogTitle>
+        <DialogTitle id='form-dialog-title'>
+          Add {resource} to Group
+        </DialogTitle>
         <DialogContent>
           <Card>
             <UserListToolbar
               numSelected={0}
               filterName={filterName}
               onFilterName={handleFilterByName}
-              slug="Groups"
+              slug='Groups'
             />
 
             <Scrollbar>
@@ -189,44 +212,71 @@ const AddToTableModal = (props) => {
                   <TableBody>
                     {data
                       ? filteredGroups
-                          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                          .slice(
+                            page * rowsPerPage,
+                            page * rowsPerPage + rowsPerPage
+                          )
                           .map((row) => {
-                            const { _id, name, manager, tasks, employees } = row;
+                            const {
+                              _id,
+                              name,
+                              manager,
+                              tasks,
+                              employees,
+                            } = row;
 
                             return (
                               <TableRow
                                 hover
                                 key={_id}
                                 tabIndex={-1}
-                                role="checkbox"
+                                role='checkbox'
                                 selected={false}
                                 aria-checked={false}
                               >
-                                <TableCell padding="checkbox">
+                                <TableCell padding='checkbox'>
                                   <Checkbox
                                     checked={selected === _id}
                                     onChange={() => setSelected(_id)}
-                                    disabled={isAlreadyHere(targetId, row.employees)}
+                                    disabled={isAlreadyHere(
+                                      targetId,
+                                      row.employees
+                                    )}
                                   />
                                 </TableCell>
-                                <TableCell component="th" scope="row" padding="none">
-                                  <Stack direction="row" alignItems="center" spacing={2}>
+                                <TableCell
+                                  component='th'
+                                  scope='row'
+                                  padding='none'
+                                >
+                                  <Stack
+                                    direction='row'
+                                    alignItems='center'
+                                    spacing={2}
+                                  >
                                     <Avatar
                                       alt={name}
                                       src={`https://ui-avatars.com/api/?background=0D8ABC&color=fff&name=${name
                                         .split(' ')
                                         .join('%20')}`}
                                     />
-                                    <Typography variant="subtitle2" noWrap>
+                                    <Typography
+                                      variant='subtitle2'
+                                      noWrap
+                                    >
                                       {name}
                                     </Typography>
                                   </Stack>
                                 </TableCell>
-                                <TableCell align="left">{manager && manager.name}</TableCell>
-                                <TableCell align="left">
+                                <TableCell align='left'>
+                                  {manager && manager.name}
+                                </TableCell>
+                                <TableCell align='left'>
                                   {employees ? employees.length : 0}
                                 </TableCell>
-                                <TableCell align="left">{tasks ? tasks.length : 0}</TableCell>
+                                <TableCell align='left'>
+                                  {tasks ? tasks.length : 0}
+                                </TableCell>
                               </TableRow>
                             );
                           })
@@ -261,7 +311,11 @@ const AddToTableModal = (props) => {
                   {data && isUserNotFound && (
                     <TableBody>
                       <TableRow>
-                        <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
+                        <TableCell
+                          align='center'
+                          colSpan={6}
+                          sx={{ py: 3 }}
+                        >
                           <SearchNotFound searchQuery={filterName} />
                         </TableCell>
                       </TableRow>
@@ -273,7 +327,7 @@ const AddToTableModal = (props) => {
 
             <TablePagination
               rowsPerPageOptions={[5, 10, 25]}
-              component="div"
+              component='div'
               count={data ? data.length : 0}
               rowsPerPage={rowsPerPage}
               page={page}
@@ -283,10 +337,18 @@ const AddToTableModal = (props) => {
           </Card>
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleSubmit} variant="contained" color="primary">
+          <Button
+            onClick={handleSubmit}
+            variant='contained'
+            color='primary'
+          >
             {slug}
           </Button>
-          <Button onClick={closeDialog} variant="contained" color="error">
+          <Button
+            onClick={closeDialog}
+            variant='contained'
+            color='error'
+          >
             Cancel
           </Button>
         </DialogActions>

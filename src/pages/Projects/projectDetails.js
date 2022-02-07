@@ -40,7 +40,11 @@ const TABLE_HEAD = [
   { _id: 'language', label: 'Language', alignRight: false },
   { _id: 'preRequiste', label: 'PreRequiste', alignRight: false },
   { _id: 'priority', label: 'Priority', alignRight: false },
-  { _id: 'difficultyLevel', label: 'Difficulty Level', alignRight: false },
+  {
+    _id: 'difficultyLevel',
+    label: 'Difficulty Level',
+    alignRight: false,
+  },
   { _id: 'scenarios', label: 'Scanerios', alignRight: false },
   { _id: '' },
 ];
@@ -73,14 +77,16 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 const ProjectDetails = () => {
-  const { getProjectById, projects, loading } = useContext(ProjectsContext);
+  const { getProjectById, projects, loading } =
+    useContext(ProjectsContext);
   const { user } = useContext(AuthContext);
   const [project, setProject] = useState();
 
@@ -107,7 +113,10 @@ const ProjectDetails = () => {
   const navigate = useNavigate();
 
   const handleTxtChange = (e) => {
-    setProjectState((st) => ({ ...st, [e.target.name]: e.target.value }));
+    setProjectState((st) => ({
+      ...st,
+      [e.target.name]: e.target.value,
+    }));
   };
   useEffect(() => {
     const data = getProjectById(id);
@@ -123,7 +132,11 @@ const ProjectDetails = () => {
   const handleDeleteTest = async (newState) => {
     try {
       toggleDelOpen();
-      const resData = await makeReq(`/projects/test/${selected}`, {}, 'DELETE');
+      const resData = await makeReq(
+        `/projects/test/${selected}`,
+        {},
+        'DELETE'
+      );
       toast.success('Test Deleted Successfully!');
 
       setProject((st) => ({
@@ -185,7 +198,10 @@ const ProjectDetails = () => {
 
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (project?.tests?.length || 0))
+      ? Math.max(
+          0,
+          (1 + page) * rowsPerPage - (project?.tests?.length || 0)
+        )
       : 0;
 
   const filteredData = applySortFilter(
@@ -283,7 +299,8 @@ const ProjectDetails = () => {
                             difficultyLevel,
                             scenarios,
                           } = row;
-                          const isItemSelected = selected?.indexOf(name) !== -1;
+                          const isItemSelected =
+                            selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -305,14 +322,23 @@ const ProjectDetails = () => {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Typography variant='subtitle2' noWrap>
+                                  <Typography
+                                    variant='subtitle2'
+                                    noWrap
+                                  >
                                     {name}
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align='left'>{language}</TableCell>
-                              <TableCell align='left'>{preRequiste}</TableCell>
-                              <TableCell align='left'>{priority}</TableCell>
+                              <TableCell align='left'>
+                                {language}
+                              </TableCell>
+                              <TableCell align='left'>
+                                {preRequiste}
+                              </TableCell>
+                              <TableCell align='left'>
+                                {priority}
+                              </TableCell>
                               <TableCell align='left'>
                                 {difficultyLevel}
                               </TableCell>
@@ -345,7 +371,11 @@ const ProjectDetails = () => {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>

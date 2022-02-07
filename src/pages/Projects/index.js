@@ -33,7 +33,6 @@ import {
 import { ProjectsContext } from 'src/Contexts/ProjectsContext';
 import { AuthContext } from 'src/Contexts/AuthContext';
 import v4 from 'uuid/dist/v4';
-import { ConfirmDialog as ConfirmDeleteModal } from 'mui-confirm-dialog';
 import plusFill from '@iconify/icons-eva/plus-fill';
 import AddorEditModal from 'src/dialogs/AddorEditModal';
 import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
@@ -76,7 +75,8 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
@@ -86,10 +86,12 @@ export default function User() {
   const [page, setPage] = useState(0);
 
   const { user, loading } = useContext(AuthContext);
+
   const {
     projects,
-    loading: projectLoading,
     deleteProject,
+    createProject,
+    loading: projectLoading,
   } = useContext(ProjectsContext);
 
   console.log('PROJECTS', projects);
@@ -141,7 +143,10 @@ export default function User() {
 
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (projects?.length || 0))
+      ? Math.max(
+          0,
+          (1 + page) * rowsPerPage - (projects?.length || 0)
+        )
       : 0;
 
   const filteredData = applySortFilter(
@@ -151,12 +156,6 @@ export default function User() {
   );
 
   const isUserNotFound = filteredData.length === 0;
-
-  const handleDelete = () => {
-    // toggleDelOpen();
-    console.log(`selected`, selected);
-    // deleteManager(selected, toggleDelOpen);
-  };
 
   return (
     <Page title='Dashboard | Projects '>
@@ -235,7 +234,8 @@ export default function User() {
                         )
                         .map((row) => {
                           const { _id, name, createdAt } = row;
-                          const isItemSelected = selected?.indexOf(name) !== -1;
+                          const isItemSelected =
+                            selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -257,7 +257,10 @@ export default function User() {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Typography variant='subtitle2' noWrap>
+                                  <Typography
+                                    variant='subtitle2'
+                                    noWrap
+                                  >
                                     {name}
                                   </Typography>
                                 </Stack>
@@ -312,7 +315,11 @@ export default function User() {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>
@@ -331,28 +338,21 @@ export default function User() {
             onPageChange={handleChangePage}
             onRowsPerPageChange={handleChangeRowsPerPage}
           />
-
-          <ConfirmDelete
-            open={isDeleteOpen}
-            toggleDialog={toggleDelOpen}
-            dialogTitle='Delete Project ? '
-            success={handleDeleteProject}
-          />
         </Card>
       </Container>
 
-      {/* <ConfirmDeleteModal
-        open={isDelOpen}
+      <ConfirmDelete
+        open={isDeleteOpen}
         toggleDialog={toggleDelOpen}
-        dialogTitle='Delete This Manager ?'
-        success={handleDelete}
-      /> */}
+        dialogTitle='Delete Project ? '
+        success={handleDeleteProject}
+      />
 
       <AddorEditModal
         isOpen={isCreateOpen}
-        // createNew={(...props) => {
-        //   addNewManager(...props, toggleCreateOpen);
-        // }}
+        createNew={(...props) => {
+          createProject(...props, toggleCreateOpen);
+        }}
         closeDialog={toggleCreateOpen}
       />
       {/* <AddorEditModal
