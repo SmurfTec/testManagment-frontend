@@ -23,7 +23,15 @@ const useStyles = makeStyles((props) => ({
   cancelBtn: {},
 }));
 
-const AddorEditModal = (props) => {
+const initialStageState = {
+  name: '',
+};
+
+const UserModal = (props) => {
+  const [stages, setStages] = useState([
+    { ...initialStageState, _id: uuid() },
+  ]);
+
   // const { user, loading } = useContext(AuthContext);
 
   const {
@@ -45,8 +53,6 @@ const AddorEditModal = (props) => {
 
   const [state, setState] = useState(initialState);
 
-  console.log('State', state);
-
   useEffect(() => {
     // TODO
     if (isEdit === true && editUser) {
@@ -55,14 +61,12 @@ const AddorEditModal = (props) => {
       });
     } else {
       setState(initialState);
+      setStages([initialStageState]);
     }
   }, [editUser, isEdit]);
 
   const handleChange = (e) => {
-    console.log(e.target.name);
-    console.log(e.target.value);
-
-    setState((st) => ({ ...st, [e.target.name]: e.target.value }));
+    setState({ ...state, [e.target.name]: e.target.value });
   };
 
   const handleSubmit = (e) => {
@@ -74,8 +78,8 @@ const AddorEditModal = (props) => {
       // updateUser();
     } else {
     }
-    createNew({ name: state.name });
-    setState(initialState);
+    createNew();
+
     e.preventDefault();
   };
 
@@ -106,6 +110,7 @@ const AddorEditModal = (props) => {
             value={state.name}
             name='name'
             onChange={handleChange}
+            disabled={viewOnly}
           />
         </DialogContent>
         <DialogActions>
@@ -129,4 +134,4 @@ const AddorEditModal = (props) => {
   );
 };
 
-export default AddorEditModal;
+export default UserModal;

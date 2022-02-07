@@ -1,6 +1,8 @@
 import { filter } from 'lodash';
 import { useContext, useState, useEffect } from 'react';
 import faker from 'faker';
+import { Icon } from '@iconify/react';
+import plusFill from '@iconify/icons-eva/plus-fill';
 
 // material
 import {
@@ -9,6 +11,7 @@ import {
   Stack,
   Avatar,
   Checkbox,
+  Button,
   TableRow,
   TableBody,
   TableCell,
@@ -22,6 +25,7 @@ import {
 import Page from '../../components/Page';
 import Scrollbar from '../../components/Scrollbar';
 import SearchNotFound from '../../components/SearchNotFound';
+import AddorEditModal from 'src/dialogs/AddorEditModal';
 import {
   UserListHead,
   UserListToolbar,
@@ -29,6 +33,9 @@ import {
 } from '../../components/_dashboard/user';
 //
 import { UsersContext } from 'src/Contexts/UsersContext';
+import { AuthContext } from 'src/Contexts/AuthContext';
+import ConfirmDelete from 'src/dialogs/ConfirmDialogBox';
+import { useToggleInput } from 'src/hooks';
 import v4 from 'uuid/dist/v4';
 
 // ----------------------------------------------------------------------
@@ -76,16 +83,20 @@ function applySortFilter(array, comparator, query) {
 }
 
 export default function User() {
+  const { users, deleteUser, loading } = useContext(UsersContext);
+  const { user, loading: userLoading } = useContext(AuthContext);
+
   const [page, setPage] = useState(0);
-  const { users, loading } = useContext(UsersContext);
   const [order, setOrder] = useState('asc');
   const [selected, setSelected] = useState([]);
   const [orderBy, setOrderBy] = useState('name');
   const [filterName, setFilterName] = useState('');
-
   const [rowsPerPage, setRowsPerPage] = useState(5);
-
   const [testers, setTesters] = useState([]);
+
+  const [isCreateOpen, toggleCreateOpen] = useState(false);
+  const [isDeleteOpen, toggleDelOpen] = useToggleInput(false);
+  const [isEditOpen, toggleEditOpen] = useToggleInput(false);
 
   useEffect(() => {
     if (!users) return;
@@ -151,6 +162,13 @@ export default function User() {
 
   const isUserNotFound = filteredUsers.length === 0;
 
+  const handleDelete = async (newState) => {
+    toggleDelOpen();
+    deleteUser(selected);
+    setSelected(null);
+    console.log('newState', newState);
+  };
+
   return (
     <Page title='Dashboard | Testers '>
       <Container>
@@ -163,11 +181,19 @@ export default function User() {
           <Typography variant='h4' gutterBottom>
             Testers
           </Typography>
+          {user && user.role === 'admin' && (
+            <Button
+              variant='contained'
+              onClick={toggleCreateOpen}
+              startIcon={<Icon icon={plusFill} />}
+            >
+              New Tester
+            </Button>
+          )}
         </Stack>
-
         <Card>
           <UserListToolbar
-            numSelected={selected.length}
+            numSelected={selected?.length}
             filterName={filterName}
             onFilterName={handleFilterByName}
             slug='Users'
@@ -181,7 +207,7 @@ export default function User() {
                   orderBy={orderBy}
                   headLabel={TABLE_HEAD}
                   rowCount={testers?.length || 0}
-                  numSelected={selected.length}
+                  numSelected={selected?.length}
                   onRequestSort={handleRequestSort}
                   onSelectAllClick={handleSelectAllClick}
                   noCheckBox
@@ -220,7 +246,7 @@ export default function User() {
                         .map((row) => {
                           const { id, name, createdAt, email } = row;
                           const isItemSelected =
-                            selected.indexOf(name) !== -1;
+                            selected?.indexOf(name) !== -1;
 
                           return (
                             <TableRow
@@ -258,7 +284,34 @@ export default function User() {
                               </TableCell>
 
                               <TableCell align='right'>
-                                <UserMoreMenu />
+                                <UserMoreMenu
+                                  currentProject={row}
+                                  // viewTask
+                                  // viewLink={`/dashboard/projects/${_id}`}
+                                  toggleDelOpen={toggleDelOpen}
+                                  toggleEditOpen={toggleEditOpen}
+                                  setSelected={setSelected}
+                                  // addToTable={!manager}
+                                  // toggleAddToOpen={() => {
+                                  //   setSelectedTask(_id);
+                                  //   toggleAddToOpen();
+                                  // }}
+                                  // handleRemoveFrom={() => {
+                                  //   console.clear();
+                                  //   console.log(`row`, row);
+                                  //   console.log(`_id`, _id);
+                                  //   console.log(
+                                  //     `manager._id`,
+                                  //     manager._id
+                                  //   );
+                                  //   const managerId =
+                                  //     manager._id || manager;
+                                  //   unAssignTaskFromManger(
+                                  //     _id,
+                                  //     managerId
+                                  //   );
+                                  // }}
+                                />
                               </TableCell>
                             </TableRow>
                           );
@@ -297,6 +350,19 @@ export default function User() {
           />
         </Card>
       </Container>
+      <ConfirmDelete
+        open={isDeleteOpen}
+        toggleDialog={toggleDelOpen}
+        dialogTitle='Delete Tester ? '
+        success={handleDelete}
+      />
+      <AddorEditModal
+        isOpen={isCreateOpen}
+        // createNew={(...props) => {
+        //   addNewManager(...props, toggleCreateOpen);
+        // }}
+        closeDialog={toggleCreateOpen}
+      />
     </Page>
   );
 }

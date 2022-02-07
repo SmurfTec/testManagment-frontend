@@ -44,13 +44,15 @@ export const ProjectsProvider = ({ children }) => {
   // * CRUD Operations
   const createProject = async (state, callback) => {
     try {
+      console.log('state', state);
+
       const resData = await makeReq(
         `/projects`,
         { body: state },
         'POST'
       );
       toast.success('Project Created Successfully!');
-      pushProject(resData.asset);
+      pushProject(resData.project);
       callback?.();
     } catch (err) {
       handleCatch(err);
@@ -65,7 +67,7 @@ export const ProjectsProvider = ({ children }) => {
         'PATCH'
       );
       toast.success('Project Updated Successfully!');
-      updateProject(id, resData.asset);
+      updateProject(id, resData.project);
       callback?.();
     } catch (err) {
       handleCatch(err);
