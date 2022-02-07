@@ -4,18 +4,18 @@ import { Box, Grid, Container, Typography } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import Page from '../components/Page';
 import {
-  AppTasks,
-  AppNewUsers,
-  AppBugReports,
-  AppItemOrders,
-  AppNewsUpdate,
-  AppWeeklySales,
-  AppOrderTimeline,
-  AppCurrentVisits,
-  AppWebsiteVisits,
-  AppTrafficBySite,
-  AppCurrentSubject,
-  AppConversionRates,
+  // AppTasks,
+  // AppNewUsers,
+  // AppBugReports,
+  // AppItemOrders,
+  // AppNewsUpdate,
+  // AppWeeklySales,
+  // AppOrderTimeline,
+  // AppCurrentVisits,
+  // AppWebsiteVisits,
+  // AppTrafficBySite,
+  // AppCurrentSubject,
+  // AppConversionRates,
   ProjectStats,
   CurrentProjects,
   AppCard,
@@ -46,6 +46,14 @@ export default function DashboardApp() {
     if (!users) return;
     setQaManagers(users.filter((user) => user.role === 'qaManager'));
   }, [users]);
+
+  let count = 0;
+
+  for (let i = 0; i < projects.length; i++) {
+    let c = 0;
+    c += projects[i].tests.length;
+    count += c;
+  }
 
   return (
     <Page title=' Admin Dashboard'>
@@ -83,7 +91,7 @@ export default function DashboardApp() {
           <Grid item xs={12} sm={6} md={3}>
             <AppCard
               title='Test Cases'
-              TOTAL={110}
+              TOTAL={count}
               Icon={FactCheckIcon}
               color='error'
             />

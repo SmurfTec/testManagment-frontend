@@ -370,6 +370,7 @@ export default function User() {
 
       <UserModal
         isOpen={isCreateOpen}
+        role='qaManager'
         createNew={(...props) => {
           createUser(...props, toggleCreateOpen);
         }}

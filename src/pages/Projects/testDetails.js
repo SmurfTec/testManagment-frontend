@@ -15,6 +15,8 @@ import {
 } from '@mui/material';
 import { Box, typography } from '@mui/system';
 import { filter } from 'lodash';
+import { Icon } from '@iconify/react';
+import plusFill from '@iconify/icons-eva/plus-fill';
 
 import React, { useContext, useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -38,7 +40,11 @@ import ManageScanerio from './AddScanerios';
 const TABLE_HEAD = [
   { _id: 'action', label: 'Action', alignRight: false },
   { _id: 'inputs', label: 'Inputs', alignRight: false },
-  { _id: 'expectedOutput', label: 'ExpectedOutput', alignRight: false },
+  {
+    _id: 'expectedOutput',
+    label: 'ExpectedOutput',
+    alignRight: false,
+  },
   { _id: 'actualOutput', label: 'ActualOutput', alignRight: false },
   { _id: 'testResults', label: 'TestResults', alignRight: false },
   { _id: 'testComments', label: 'TestComments', alignRight: false },
@@ -74,14 +80,16 @@ function applySortFilter(array, comparator, query) {
   if (query) {
     return filter(
       array,
-      (_user) => _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      (_user) =>
+        _user.name.toLowerCase().indexOf(query.toLowerCase()) !== -1
     );
   }
   return stabilizedThis.map((el) => el[0]);
 }
 
 const TestDetails = () => {
-  const { getProjectById, projects, loading } = useContext(ProjectsContext);
+  const { getProjectById, projects, loading } =
+    useContext(ProjectsContext);
   const { user } = useContext(AuthContext);
   const [project, setProject] = useState();
   const [test, setTest] = useState();
@@ -109,7 +117,9 @@ const TestDetails = () => {
 
     console.log('testId', testId);
     setProject(data);
-    let newTest = data.tests?.find((el) => el._id === testId.toString());
+    let newTest = data.tests?.find(
+      (el) => el._id === testId.toString()
+    );
 
     if (!newTest) return navigate(`/dashboard/projects/${id}`);
 
@@ -146,7 +156,10 @@ const TestDetails = () => {
 
   const emptyRows =
     page > 0
-      ? Math.max(0, (1 + page) * rowsPerPage - (project?.tests?.length || 0))
+      ? Math.max(
+          0,
+          (1 + page) * rowsPerPage - (project?.tests?.length || 0)
+        )
       : 0;
 
   const filteredData = applySortFilter(
@@ -250,7 +263,7 @@ const TestDetails = () => {
           mb={5}
         >
           <Typography variant='h4' gutterBottom>
-            Project {project.name}
+            Test Name : {test.name}
           </Typography>
         </Stack>
 
@@ -283,6 +296,14 @@ const TestDetails = () => {
             onChange={handleTxtChange}
             label='PreRequiste'
           />
+        </Box>
+        <Box
+          style={{
+            display: 'flex',
+            gap: 20,
+            flexWrap: 'wrap',
+          }}
+        >
           <TextField
             variant='outlined'
             name='priority'
@@ -297,21 +318,28 @@ const TestDetails = () => {
             onChange={handleTxtChange}
             label='Difficulty Level'
           />
-          <Button variant='contained' color='primary' onClick={handleSave}>
+          <Button
+            variant='contained'
+            color='primary'
+            onClick={handleSave}
+            style={{ width: '7rem' }}
+          >
             Save
           </Button>
         </Box>
 
-        <Button
-          variant='contained'
-          color='secondary'
-          onClick={toggleAddScanerios}
-          sx={{ mb: 1 }}
-        >
-          Add New Scenario
-        </Button>
         <Typography variant='h5'>Scanerios</Typography>
         <Card>
+          <Button
+            variant='contained'
+            onClick={toggleAddScanerios}
+            style={{ float: 'right' }}
+            startIcon={<Icon icon={plusFill} />}
+            m={2}
+          >
+            Add New Scenario
+          </Button>
+
           <UserListToolbar
             numSelected={selected?.length}
             filterName={filterName}
@@ -392,18 +420,29 @@ const TestDetails = () => {
                                   alignItems='center'
                                   spacing={2}
                                 >
-                                  <Typography variant='subtitle2' noWrap>
+                                  <Typography
+                                    variant='subtitle2'
+                                    noWrap
+                                  >
                                     {action}
                                   </Typography>
                                 </Stack>
                               </TableCell>
-                              <TableCell align='left'>{inputs}</TableCell>
+                              <TableCell align='left'>
+                                {inputs}
+                              </TableCell>
                               <TableCell align='left'>
                                 {expectedOutput}
                               </TableCell>
-                              <TableCell align='left'>{actualOutput}</TableCell>
-                              <TableCell align='left'>{testResults}</TableCell>
-                              <TableCell align='left'>{testComments}</TableCell>
+                              <TableCell align='left'>
+                                {actualOutput}
+                              </TableCell>
+                              <TableCell align='left'>
+                                {testResults}
+                              </TableCell>
+                              <TableCell align='left'>
+                                {testComments}
+                              </TableCell>
                               {user && user.role === 'admin' && (
                                 <TableCell align='right'>
                                   <UserMoreMenu
@@ -431,7 +470,11 @@ const TestDetails = () => {
                 {isUserNotFound && (
                   <TableBody>
                     <TableRow>
-                      <TableCell align='center' colSpan={6} sx={{ py: 3 }}>
+                      <TableCell
+                        align='center'
+                        colSpan={6}
+                        sx={{ py: 3 }}
+                      >
                         <SearchNotFound searchQuery={filterName} />
                       </TableCell>
                     </TableRow>

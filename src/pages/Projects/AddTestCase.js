@@ -52,12 +52,14 @@ const AddTestCase = ({ open, toggleDialog, onSuccess }) => {
               variant='outlined'
               name='name'
               value={state.name}
+              fullWidth
               onChange={handleTxtChange}
               label='Name'
             />
             <TextField
               variant='outlined'
               name='language'
+              fullWidth
               value={state.language}
               onChange={handleTxtChange}
               label='Language'
@@ -65,11 +67,13 @@ const AddTestCase = ({ open, toggleDialog, onSuccess }) => {
             <TextField
               variant='outlined'
               name='preRequiste'
+              fullWidth
               value={state.preRequiste}
               onChange={handleTxtChange}
               label='PreRequiste'
             />
-            <FormControl style={{ width: 200 }}>
+
+            <FormControl style={{ width: 250 }}>
               <InputLabel id='Priority'>Priority</InputLabel>
               <Select
                 labelId='Priority'
@@ -77,6 +81,7 @@ const AddTestCase = ({ open, toggleDialog, onSuccess }) => {
                 value={state.priority}
                 label='Priority'
                 name='priority'
+                type='text'
                 onChange={handleTxtChange}
               >
                 <MenuItem value={'high'}>High</MenuItem>
@@ -84,24 +89,43 @@ const AddTestCase = ({ open, toggleDialog, onSuccess }) => {
                 <MenuItem value={'low'}>Low</MenuItem>
               </Select>
             </FormControl>
-            <TextField
-              variant='outlined'
-              name='difficultyLevel'
-              value={state.difficultyLevel}
-              onChange={handleTxtChange}
-              type='number'
-              style={{ width: 200 }}
-              inputProps={{ min: 1, max: 5 }}
-              label='Difficulty Level'
-            />
+            <FormControl style={{ width: 250 }}>
+              <InputLabel id='DifficultyLevel'>
+                difficultyLevel
+              </InputLabel>
+              <Select
+                labelId='DifficultyLevel'
+                id='DifficultyLevel-id'
+                value={state.difficultyLevel}
+                label='Difficulty Level'
+                name='difficultyLevel'
+                type='number'
+                onChange={handleTxtChange}
+              >
+                <MenuItem value={1}>1</MenuItem>
+                <MenuItem value={2}>2</MenuItem>
+                <MenuItem value={3}>3</MenuItem>
+                <MenuItem value={4}>4</MenuItem>
+                <MenuItem value={5}>5</MenuItem>
+              </Select>
+            </FormControl>
           </Box>
         </form>
       </DialogContent>
       <DialogActions>
-        <Button variant='contained' color='primary' form='form' type='submit'>
+        <Button
+          variant='contained'
+          color='primary'
+          form='form'
+          type='submit'
+        >
           Create
         </Button>
-        <Button variant='contained' color='error' onClick={toggleDialog}>
+        <Button
+          variant='contained'
+          color='error'
+          onClick={toggleDialog}
+        >
           Cancel
         </Button>
       </DialogActions>

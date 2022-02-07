@@ -29,7 +29,8 @@ const ManageScanerio = ({
   const [state, setState] = useState(initialState);
 
   useEffect(() => {
-    if (!update || !scenario || !scenario.action) return setState(initialState);
+    if (!update || !scenario || !scenario.action)
+      return setState(initialState);
 
     console.log('scenario', scenario);
     setState(scenario);
@@ -47,7 +48,9 @@ const ManageScanerio = ({
 
   return (
     <Dialog open={open} onClose={toggleDialog}>
-      <DialogTitle>{update ? 'Update' : 'Create'} Scanerio</DialogTitle>
+      <DialogTitle>
+        {update ? 'Update' : 'Create'} Scanerio
+      </DialogTitle>
       <DialogContent>
         <form id='form' onSubmit={handleSubmit}>
           <Box
@@ -60,6 +63,7 @@ const ManageScanerio = ({
           >
             <TextField
               variant='outlined'
+              fullWidth
               name='action'
               value={state.action}
               onChange={handleTxtChange}
@@ -69,6 +73,7 @@ const ManageScanerio = ({
             <TextField
               variant='outlined'
               name='inputs'
+              fullWidth
               value={state.inputs}
               onChange={handleTxtChange}
               label='Inputs'
@@ -77,6 +82,7 @@ const ManageScanerio = ({
             <TextField
               variant='outlined'
               name='expectedOutput'
+              fullWidth
               value={state.expectedOutput}
               onChange={handleTxtChange}
               label='ExpectedOutput'
@@ -85,6 +91,7 @@ const ManageScanerio = ({
             <TextField
               variant='outlined'
               name='actualOutput'
+              fullWidth
               value={state.actualOutput}
               onChange={handleTxtChange}
               label='ActualOutput'
@@ -93,6 +100,7 @@ const ManageScanerio = ({
             <TextField
               variant='outlined'
               name='testResults'
+              fullWidth
               value={state.testResults}
               onChange={handleTxtChange}
               label='TestResults'
@@ -101,6 +109,7 @@ const ManageScanerio = ({
             <TextField
               variant='outlined'
               name='testComments'
+              fullWidth
               value={state.testComments}
               onChange={handleTxtChange}
               label='TestComments'
@@ -110,10 +119,19 @@ const ManageScanerio = ({
         </form>
       </DialogContent>
       <DialogActions>
-        <Button variant='contained' color='primary' form='form' type='submit'>
+        <Button
+          variant='contained'
+          color='primary'
+          form='form'
+          type='submit'
+        >
           {update ? 'Update' : 'Create'}
         </Button>
-        <Button variant='contained' color='error' onClick={toggleDialog}>
+        <Button
+          variant='contained'
+          color='error'
+          onClick={toggleDialog}
+        >
           Cancel
         </Button>
       </DialogActions>

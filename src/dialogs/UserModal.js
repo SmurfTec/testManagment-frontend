@@ -30,7 +30,6 @@ const UserModal = (props) => {
     isEdit,
     editUser,
     updateUser,
-    viewOnly,
   } = props;
 
   const classes = useStyles();
@@ -109,7 +108,6 @@ const UserModal = (props) => {
             value={state.name}
             name='name'
             onChange={handleChange}
-            disabled={viewOnly}
           />
           <TextField
             autoFocus
@@ -144,17 +142,32 @@ const UserModal = (props) => {
             name='passwordConfirm'
             onChange={handleChange}
           />
-          <TextField
-            autoFocus
-            margin='dense'
-            id='role'
-            label='Role'
-            type='role'
-            fullWidth
-            value={state.role}
-            name='role'
-            onChange={handleChange}
-          />
+          {role === 'tester' && (
+            <TextField
+              autoFocus
+              margin='dense'
+              id='role'
+              label='Role'
+              type='role'
+              fullWidth
+              value='tester'
+              name='role'
+              inputProps={{ readOnly: true }}
+            />
+          )}
+          {role === 'qaManager' && (
+            <TextField
+              autoFocus
+              margin='dense'
+              id='role'
+              label='Role'
+              type='role'
+              fullWidth
+              value='qaManager'
+              name='role'
+              inputProps={{ readOnly: true }}
+            />
+          )}
         </DialogContent>
         <DialogActions>
           <Button
